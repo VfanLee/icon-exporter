@@ -28,6 +28,7 @@ export const DEFAULT_EXPORT_OPTIONS = {
     color: '#ffffff',
   },
   padding: 0,
+  borderRadius: 0,
   fit: 'contain' satisfies FitMode,
   quality: {
     webp: 90,

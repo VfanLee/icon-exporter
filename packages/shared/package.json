@@ -2,7 +2,7 @@
   "name": "@icon-exporter/shared",
   "private": true,
   "version": "0.1.0",
-  "type": "module",
+  "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -11,6 +11,6 @@
     "test": "echo \"No tests for shared\""
   },
   "devDependencies": {
-    "typescript": "workspace:*"
+    "typescript": "^5.7.3"
   }
 }

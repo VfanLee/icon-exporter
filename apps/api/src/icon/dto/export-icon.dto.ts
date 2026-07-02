@@ -87,6 +87,11 @@ export class ExportIconDto {
   @Max(0.5)
   padding!: number;
 
+  @IsNumber()
+  @Min(0)
+  @Max(0.5)
+  borderRadius!: number;
+
   @IsIn(FIT_MODES)
   fit!: FitMode;
 

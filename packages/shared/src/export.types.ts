@@ -23,6 +23,7 @@ export interface ExportIconRequest {
   formats: ExportFormat[];
   background: ExportBackground;
   padding: number;
+  borderRadius: number;
   fit: FitMode;
   quality: ExportQuality;
 }
