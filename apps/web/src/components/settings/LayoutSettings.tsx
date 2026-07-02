@@ -1,5 +1,5 @@
 import { Select, Slider } from 'antd'
-import { type FitMode } from '@icon-exporter/shared'
+import { type FitMode } from '@icon-forge/shared'
 import { fitModeOptions, positionOptions } from '../../constants/labels'
 import { useIconStore } from '../../stores/iconStore'
 import { SettingField } from './SettingField'

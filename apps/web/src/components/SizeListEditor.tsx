@@ -1,8 +1,8 @@
 import { Button, InputNumber, Space, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
-import type { ExportSize } from '@icon-exporter/shared'
-import { MAX_EXPORT_SIZE } from '@icon-exporter/shared'
+import type { ExportSize } from '@icon-forge/shared'
+import { MAX_EXPORT_SIZE } from '@icon-forge/shared'
 import { useIconStore } from '../stores/iconStore'
 
 export function SizeListEditor() {

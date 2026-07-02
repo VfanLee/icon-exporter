@@ -28,7 +28,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@icon-exporter/shared': fileURLToPath(new URL('../../packages/shared/src/index.ts', import.meta.url)),
+      '@icon-forge/shared': fileURLToPath(new URL('../../packages/shared/src/index.ts', import.meta.url)),
     },
   },
   server: {

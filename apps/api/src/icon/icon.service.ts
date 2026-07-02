@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common'
-import { MAX_OUTPUT_FILE_COUNT, type ExportFormat, type ValidateSvgResponse } from '@icon-exporter/shared'
+import { MAX_OUTPUT_FILE_COUNT, type ExportFormat, type ValidateSvgResponse } from '@icon-forge/shared'
 import type { Response } from 'express'
 import { ExportIconDto, PreviewIconDto } from './dto/export-icon.dto'
 import { ImageRendererService } from './services/image-renderer.service'

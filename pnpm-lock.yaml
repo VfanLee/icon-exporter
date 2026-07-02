@@ -17,7 +17,7 @@ importers:
 
   apps/api:
     dependencies:
-      '@icon-exporter/shared':
+      '@icon-forge/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@nestjs/common':
@@ -141,7 +141,7 @@ importers:
       '@codemirror/view':
         specifier: ^6.36.0
         version: 6.43.4
-      '@icon-exporter/shared':
+      '@icon-forge/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@uiw/react-codemirror':

@@ -1,4 +1,4 @@
-import { FIT_MODES, RESIZE_POSITIONS, type FitMode, type ResizePosition } from '@icon-exporter/shared'
+import { FIT_MODES, RESIZE_POSITIONS, type FitMode, type ResizePosition } from '@icon-forge/shared'
 
 export const FIT_MODE_LABELS: Record<FitMode, string> = {
   contain: 'contain（适应）',

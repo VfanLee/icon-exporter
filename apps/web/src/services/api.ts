@@ -3,7 +3,7 @@ import type {
   PreviewIconRequest,
   ValidateSvgRequest,
   ValidateSvgResponse,
-} from '@icon-exporter/shared'
+} from '@icon-forge/shared'
 
 async function parseError(response: Response) {
   try {

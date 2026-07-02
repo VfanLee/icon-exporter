@@ -30,9 +30,9 @@ export default function App() {
         <Flex justify="space-between" align="center" wrap="wrap" gap={16} className="app-header-inner">
           <div>
             <Title level={3} className="app-title">
-              免费图标导出
+              IconForge
             </Title>
-            <Text type="secondary">本地 SVG 预览、校验与多格式导出</Text>
+            <Text type="secondary">本地 SVG 图标合成与多格式导出</Text>
           </div>
         </Flex>
       </Header>

@@ -8,7 +8,7 @@ import {
   RASTER_DENSITY,
   type ExportFormat,
   type ExportSize,
-} from '@icon-exporter/shared'
+} from '@icon-forge/shared'
 import type { ExportIconDto } from '../dto/export-icon.dto'
 
 @Injectable()

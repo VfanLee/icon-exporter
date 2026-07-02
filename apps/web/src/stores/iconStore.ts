@@ -12,7 +12,7 @@ import {
   type PreviewIconRequest,
   type ExportSize,
   type ValidateSvgResponse,
-} from '@icon-exporter/shared'
+} from '@icon-forge/shared'
 
 const SAMPLE_SVG = `<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
   <circle cx="64" cy="64" r="48" fill="#8c8c8c"/>

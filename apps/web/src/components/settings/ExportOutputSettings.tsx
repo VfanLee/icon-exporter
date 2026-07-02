@@ -1,5 +1,5 @@
 import { Alert, Checkbox, Input, InputNumber } from 'antd'
-import { EXPORT_FORMATS, type ExportFormat } from '@icon-exporter/shared'
+import { EXPORT_FORMATS, type ExportFormat } from '@icon-forge/shared'
 import { useIconStore } from '../../stores/iconStore'
 import { SettingField } from './SettingField'
 import { SizeListEditor } from '../SizeListEditor'

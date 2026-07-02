@@ -1,5 +1,5 @@
 {
-  "name": "@icon-exporter/api",
+  "name": "@icon-forge/api",
   "version": "0.1.0",
   "private": true,
   "description": "",
@@ -37,7 +37,7 @@
     }
   },
   "dependencies": {
-    "@icon-exporter/shared": "workspace:*",
+    "@icon-forge/shared": "workspace:*",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",

@@ -23,8 +23,8 @@ import {
   MAX_FORMAT_COUNT,
   MAX_SIZE_COUNT,
   RESIZE_POSITIONS,
-} from '@icon-exporter/shared'
-import type { ExportFormat, FitMode } from '@icon-exporter/shared'
+} from '@icon-forge/shared'
+import type { ExportFormat, FitMode } from '@icon-forge/shared'
 
 export class ExportSizeDto {
   @IsInt()

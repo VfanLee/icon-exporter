@@ -12,7 +12,7 @@
     "moduleResolution": "bundler",
     "baseUrl": ".",
     "paths": {
-      "@icon-exporter/shared": ["../../packages/shared/src/index.ts"]
+      "@icon-forge/shared": ["../../packages/shared/src/index.ts"]
     },
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,

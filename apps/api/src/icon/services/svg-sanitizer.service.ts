@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { XMLParser } from 'fast-xml-parser'
-import { SVG_MAX_BYTES } from '@icon-exporter/shared'
-import type { ValidateSvgResponse } from '@icon-exporter/shared'
+import { SVG_MAX_BYTES } from '@icon-forge/shared'
+import type { ValidateSvgResponse } from '@icon-forge/shared'
 
 const FORBIDDEN_TAGS = ['script', 'foreignObject', 'iframe', 'object', 'embed']
 const EXTERNAL_REF_PATTERN = /\b(?:href|xlink:href|src)\s*=\s*["'](?:https?:|\/\/|data:)/i
