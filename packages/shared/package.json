@@ -1,7 +1,7 @@
 {
   "name": "@icon-exporter/shared",
-  "private": true,
   "version": "0.1.0",
+  "private": true,
   "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,6 +11,9 @@
     "test": "echo \"No tests for shared\""
   },
   "devDependencies": {
-    "typescript": "^5.7.3"
+    "@eslint/js": "^9.18.0",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0"
   }
 }

@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+.reinit-backups
+
+apps/*/dist
+packages/*/dist
+
+pnpm-lock.yaml
