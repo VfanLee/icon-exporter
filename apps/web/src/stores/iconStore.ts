@@ -21,7 +21,7 @@ const SAMPLE_SVG = `<svg width="128" height="128" viewBox="0 0 128 128" xmlns="h
   <path d="M44 78c8 12 32 12 40 0" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
 </svg>`
 
-const DEFAULT_PREVIEW_SIZE: ExportSize = { width: 512, height: 512 }
+const PREVIEW_SIZE: ExportSize = { width: 512, height: 512 }
 
 interface IconState {
   svg: string
@@ -36,7 +36,6 @@ interface IconState {
   webpQuality: number
   jpegQuality: number
   avifQuality: number
-  previewSize: ExportSize
   resizePosition: (typeof DEFAULT_RESIZE_OPTIONS)['position']
   rotate: number
   flip: boolean
@@ -67,7 +66,6 @@ interface IconState {
   setWebpQuality: (quality: number) => void
   setJpegQuality: (quality: number) => void
   setAvifQuality: (quality: number) => void
-  setPreviewSize: (size: ExportSize) => void
   setResizePosition: (position: IconState['resizePosition']) => void
   setRotate: (rotate: number) => void
   setFlip: (flip: boolean) => void
@@ -147,7 +145,6 @@ export const useIconStore = create<IconState>((set, get) => ({
   webpQuality: DEFAULT_EXPORT_OPTIONS.quality.webp,
   jpegQuality: DEFAULT_EXPORT_OPTIONS.quality.jpeg,
   avifQuality: DEFAULT_EXPORT_OPTIONS.quality.avif,
-  previewSize: DEFAULT_PREVIEW_SIZE,
   resizePosition: DEFAULT_RESIZE_OPTIONS.position,
   rotate: DEFAULT_TRANSFORM_OPTIONS.rotate,
   flip: DEFAULT_TRANSFORM_OPTIONS.flip,
@@ -177,7 +174,6 @@ export const useIconStore = create<IconState>((set, get) => ({
   setWebpQuality: (webpQuality) => set({ webpQuality }),
   setJpegQuality: (jpegQuality) => set({ jpegQuality }),
   setAvifQuality: (avifQuality) => set({ avifQuality }),
-  setPreviewSize: (previewSize) => set({ previewSize }),
   setResizePosition: (resizePosition) => set({ resizePosition }),
   setRotate: (rotate) => set({ rotate }),
   setFlip: (flip) => set({ flip }),
@@ -217,10 +213,10 @@ export const useIconStore = create<IconState>((set, get) => ({
     return {
       ...buildRenderOptions(state),
       filename: DEFAULT_EXPORT_OPTIONS.filename,
-      sizes: [state.previewSize],
+      sizes: [PREVIEW_SIZE],
       formats: ['png'],
       quality: DEFAULT_EXPORT_OPTIONS.quality,
-      previewSize: state.previewSize,
+      previewSize: PREVIEW_SIZE,
     }
   },
 }))

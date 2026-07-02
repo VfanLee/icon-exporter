@@ -28,6 +28,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      // Vite 需要 ESM；shared 的 dist 是 CJS（供 Nest 使用），web 直接编源码
       '@icon-forge/shared': fileURLToPath(new URL('../../packages/shared/src/index.ts', import.meta.url)),
     },
   },
@@ -39,6 +40,11 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['@uiw/react-codemirror', '@codemirror/lang-xml', '@codemirror/theme-one-dark', '@codemirror/view'],
+    include: [
+      '@uiw/react-codemirror',
+      '@codemirror/lang-xml',
+      '@codemirror/theme-one-dark',
+      '@codemirror/view',
+    ],
   },
 })

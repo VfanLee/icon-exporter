@@ -49,13 +49,7 @@ export class ImageRendererService {
     })
 
     if (transform.rotate !== 0) {
-      icon = icon.rotate(transform.rotate, { background: this.transparentBackground() })
-      icon = icon.resize({
-        width: innerWidth,
-        height: innerHeight,
-        fit: 'inside',
-        background: this.transparentBackground(),
-      })
+      icon = await this.applyCenterRotation(icon, transform.rotate, innerWidth, innerHeight)
     }
     if (transform.flip) {
       icon = icon.flip()
@@ -120,7 +114,67 @@ export class ImageRendererService {
     }).composite(composites)
   }
 
-  private async encode(image: Sharp, format: Exclude<ExportFormat, 'svg'>, options: ExportIconDto) {
+  private async applyCenterRotation(
+    icon: Sharp,
+    angle: number,
+    innerWidth: number,
+    innerHeight: number,
+  ): Promise<Sharp> {
+    const iconBuffer = await icon.png().toBuffer()
+    const { width = innerWidth, height = innerHeight } = await sharp(iconBuffer).metadata()
+    const padSize = Math.ceil(Math.sqrt(width ** 2 + height ** 2))
+    const padTop = Math.floor((padSize - height) / 2)
+    const padLeft = Math.floor((padSize - width) / 2)
+
+    const rotatedBuffer = await sharp(iconBuffer)
+      .extend({
+        top: padTop,
+        bottom: padSize - height - padTop,
+        left: padLeft,
+        right: padSize - width - padLeft,
+        background: this.transparentBackground(),
+      })
+      .rotate(angle, { background: this.transparentBackground() })
+      .png()
+      .toBuffer()
+
+    const { width: rotatedWidth = padSize, height: rotatedHeight = padSize } = await sharp(rotatedBuffer).metadata()
+    const cropLeft = Math.max(0, Math.floor((rotatedWidth - innerWidth) / 2))
+    const cropTop = Math.max(0, Math.floor((rotatedHeight - innerHeight) / 2))
+    const cropWidth = Math.max(1, Math.min(innerWidth, rotatedWidth - cropLeft))
+    const cropHeight = Math.max(1, Math.min(innerHeight, rotatedHeight - cropTop))
+
+    const croppedBuffer = await sharp(rotatedBuffer)
+      .extract({ left: cropLeft, top: cropTop, width: cropWidth, height: cropHeight })
+      .png()
+      .toBuffer()
+
+    const { width: croppedWidth = cropWidth, height: croppedHeight = cropHeight } =
+      await sharp(croppedBuffer).metadata()
+    const compositeLeft = Math.floor((innerWidth - croppedWidth) / 2)
+    const compositeTop = Math.floor((innerHeight - croppedHeight) / 2)
+
+    return sharp({
+      create: {
+        width: innerWidth,
+        height: innerHeight,
+        channels: 4,
+        background: this.transparentBackground(),
+      },
+    }).composite([
+      {
+        input: croppedBuffer,
+        left: compositeLeft,
+        top: compositeTop,
+      },
+    ])
+  }
+
+  private async encode(
+    image: Sharp,
+    format: Exclude<ExportFormat, 'svg'>,
+    options: ExportIconDto,
+  ): Promise<Buffer> {
     switch (format) {
       case 'png':
         return image.png().toBuffer()
@@ -133,6 +187,10 @@ export class ImageRendererService {
           .toBuffer()
       case 'avif':
         return image.avif({ quality: options.quality.avif ?? 50 }).toBuffer()
+      default: {
+        const _exhaustive: never = format
+        throw new Error(`Unsupported format: ${_exhaustive}`)
+      }
     }
   }
 

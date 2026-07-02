@@ -69,7 +69,7 @@ export const DEFAULT_EXPORT_OPTIONS = {
   },
   padding: 0,
   borderRadius: 0,
-  fit: 'contain' satisfies FitMode,
+  fit: 'contain' as FitMode,
   quality: {
     webp: 90,
     jpeg: 90,

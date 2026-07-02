@@ -32,7 +32,7 @@ export default function App() {
             <Title level={3} className="app-title">
               IconForge
             </Title>
-            <Text type="secondary">本地 SVG 图标合成与多格式导出</Text>
+            <Text type="secondary">SVG 图标合成与多格式导出</Text>
           </div>
         </Flex>
       </Header>
