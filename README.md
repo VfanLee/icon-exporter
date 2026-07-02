@@ -1,86 +1,32 @@
-# icon-exporter
+# 图标导出
 
-Local SVG icon preview, validation, and export tool.
+把 SVG Logo 快速合成 App 风格图标，并批量导出多种尺寸与格式。
 
-## Stack
+适合制作应用图标、Dock 图标、多尺寸素材包等。
 
-- Web: React, Vite, TypeScript, Ant Design, CodeMirror, Zustand
-- API: NestJS, TypeScript, Sharp, archiver, Swagger
-- Workspace: pnpm monorepo with `apps/web`, `apps/api`, and `packages/shared`
+## 能做什么
 
-## Features
+- 上传或编辑 SVG
+- 实时预览合成效果
+- 调整画布背景、内边距、圆角
+- 一次导出 PNG、WebP、JPEG、AVIF、SVG
+- 同时输出多个画布尺寸，打包为 ZIP
 
-- Upload or paste SVG source
-- Edit SVG source with CodeMirror
-- Preview on transparent, white, or dark backgrounds
-- Validate SVG with basic safety checks
-- Export PNG, WebP, JPEG, and SVG
-- Batch export multiple sizes as a ZIP file
-- Configure filename, sizes, formats, background, padding, fit mode, and quality
+## 怎么用
 
-## Limits
+### 启动
 
-- SVG max size: 1MB
-- Max export dimension: 2048 x 2048
-- Max sizes per request: 20
-- Max formats per request: 4
-- Max output files per request: 40
-
-The SVG safety layer is a basic local-tool filter. It rejects common risky content such as scripts, `foreignObject`, event handlers, and external references, but it is not a complete hostile SVG sandbox.
-
-## Development
+需要 [Node.js](https://nodejs.org/) 环境：
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Expected local URLs:
+浏览器打开 http://localhost:5173
 
-- Web: http://localhost:5173
-- API: http://localhost:3000
-- Swagger: http://localhost:3000/api-docs
+### 基本流程
 
-## API
-
-### `GET /health`
-
-Returns:
-
-```json
-{ "status": "ok" }
-```
-
-### `POST /api/icon/validate`
-
-```json
-{
-  "svg": "<svg>...</svg>"
-}
-```
-
-Returns SVG validity, width, height, viewBox, warnings, and sanitized SVG when valid.
-
-### `POST /api/icon/export`
-
-Returns `application/zip`.
-
-```json
-{
-  "svg": "<svg>...</svg>",
-  "filename": "logo",
-  "sizes": [{ "width": 16, "height": 16 }],
-  "formats": ["png", "webp", "jpeg", "svg"],
-  "background": {
-    "transparent": true,
-    "color": "#ffffff"
-  },
-  "padding": 0,
-  "borderRadius": 0,
-  "fit": "contain",
-  "quality": {
-    "webp": 90,
-    "jpeg": 90
-  }
-}
-```
+1. **上传 SVG** — 点击右上角「上传 SVG」，或在「SVG 源码」里粘贴代码
+2. **预览调整** — 在「预览」里查看效果，右侧设置背景、内边距、圆角、尺寸、格式等
+3. **导出** — 点击「导出 ZIP」下载成品
