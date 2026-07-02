@@ -8,17 +8,19 @@ export function SvgEditor() {
   const setSvg = useIconStore((state) => state.setSvg)
 
   return (
-    <CodeMirror
-      value={svg}
-      height="420px"
-      extensions={[xml()]}
-      theme={oneDark}
-      basicSetup={{
-        lineNumbers: true,
-        foldGutter: true,
-        autocompletion: true,
-      }}
-      onChange={setSvg}
-    />
+    <div className="workspace-editor">
+      <CodeMirror
+        value={svg}
+        height="100%"
+        extensions={[xml()]}
+        theme={oneDark}
+        basicSetup={{
+          lineNumbers: true,
+          foldGutter: true,
+          autocompletion: true,
+        }}
+        onChange={setSvg}
+      />
+    </div>
   )
 }

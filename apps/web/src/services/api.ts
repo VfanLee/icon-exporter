@@ -1,4 +1,9 @@
-import type { ExportIconRequest, ValidateSvgRequest, ValidateSvgResponse } from '@icon-exporter/shared'
+import type {
+  ExportIconRequest,
+  PreviewIconRequest,
+  ValidateSvgRequest,
+  ValidateSvgResponse,
+} from '@icon-exporter/shared'
 
 async function parseError(response: Response) {
   try {
@@ -28,6 +33,20 @@ export async function validateSvg(payload: ValidateSvgRequest): Promise<Validate
 
 export async function exportIcon(payload: ExportIconRequest) {
   const response = await fetch('/api/icon/export', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+  if (!response.ok) {
+    throw new Error(await parseError(response))
+  }
+
+  return response.blob()
+}
+
+export async function previewIcon(payload: PreviewIconRequest): Promise<Blob> {
+  const response = await fetch('/api/icon/preview', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

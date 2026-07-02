@@ -18,12 +18,12 @@ export function ExportButton() {
       const result = await validateSvg({ svg })
       setValidation(result)
       if (result.valid) {
-        message.success('SVG is valid')
+        message.success('SVG 校验通过')
       } else {
-        message.error(result.warnings.join('; '))
+        message.error(result.warnings.join('；'))
       }
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Validation failed')
+      message.error(error instanceof Error ? error.message : '校验失败')
     } finally {
       setValidating(false)
     }
@@ -39,9 +39,9 @@ export function ExportButton() {
       link.download = `${filename || 'icon'}-export.zip`
       link.click()
       URL.revokeObjectURL(url)
-      message.success('ZIP downloaded')
+      message.success('ZIP 已下载')
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Export failed')
+      message.error(error instanceof Error ? error.message : '导出失败')
     } finally {
       setExporting(false)
     }
@@ -50,10 +50,10 @@ export function ExportButton() {
   return (
     <Space wrap>
       <Button icon={<SafetyCertificateOutlined />} loading={validating} onClick={handleValidate}>
-        Validate SVG
+        校验 SVG
       </Button>
       <Button type="primary" icon={<DownloadOutlined />} loading={exporting} onClick={handleExport}>
-        Export ZIP
+        导出 ZIP
       </Button>
     </Space>
   )

@@ -20,13 +20,13 @@ export class SvgSanitizerService {
     const bytes = Buffer.byteLength(svg, 'utf8')
 
     if (bytes > SVG_MAX_BYTES) {
-      throw new BadRequestException('SVG exceeds the 1MB size limit.')
+      throw new BadRequestException('SVG 超过 1MB 大小限制。')
     }
 
     if (!svg.trim().startsWith('<svg')) {
       return {
         valid: false,
-        warnings: ['Input must start with an <svg> element.'],
+        warnings: ['内容必须以 <svg> 元素开头。'],
       }
     }
 
@@ -35,26 +35,26 @@ export class SvgSanitizerService {
     } catch {
       return {
         valid: false,
-        warnings: ['SVG XML is not parseable.'],
+        warnings: ['SVG XML 无法解析。'],
       }
     }
 
     for (const tag of FORBIDDEN_TAGS) {
       if (new RegExp(`<\\s*${tag}\\b`, 'i').test(svg)) {
-        warnings.push(`Forbidden tag found: ${tag}.`)
+        warnings.push(`发现禁止使用的标签：${tag}`)
       }
     }
 
     if (EVENT_HANDLER_PATTERN.test(svg)) {
-      warnings.push('Event handler attributes are not allowed.')
+      warnings.push('不允许使用事件处理属性。')
     }
 
     if (EXTERNAL_REF_PATTERN.test(svg)) {
-      warnings.push('External image or resource references are not allowed.')
+      warnings.push('不允许引用外部图片或资源。')
     }
 
     if (EXTERNAL_STYLE_PATTERN.test(svg)) {
-      warnings.push('External CSS imports or URLs are not allowed.')
+      warnings.push('不允许使用外部 CSS 导入或 URL。')
     }
 
     const dimensions = this.extractDimensions(svg)

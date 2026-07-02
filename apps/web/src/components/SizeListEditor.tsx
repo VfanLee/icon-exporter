@@ -19,7 +19,7 @@ export function SizeListEditor() {
 
   const columns: ColumnsType<ExportSize & { key: number }> = [
     {
-      title: 'Width',
+      title: '宽',
       dataIndex: 'width',
       render: (_, record, index) => (
         <InputNumber
@@ -31,7 +31,7 @@ export function SizeListEditor() {
       ),
     },
     {
-      title: 'Height',
+      title: '高',
       dataIndex: 'height',
       render: (_, record, index) => (
         <InputNumber
@@ -52,7 +52,7 @@ export function SizeListEditor() {
           icon={<DeleteOutlined />}
           disabled={sizes.length <= 1}
           onClick={() => removeSize(index)}
-          aria-label="Remove size"
+          aria-label="删除尺寸"
         />
       ),
     },
@@ -62,12 +62,19 @@ export function SizeListEditor() {
     <Space direction="vertical" className="full-width">
       <Table
         size="small"
+        bordered
         pagination={false}
+        scroll={{ x: true }}
         columns={columns}
         dataSource={sizes.map((size, index) => ({ ...size, key: index }))}
       />
-      <Button icon={<PlusOutlined />} onClick={() => setSizes([...sizes, { width: 1024, height: 1024 }])}>
-        Add size
+      <Button
+        block
+        type="dashed"
+        icon={<PlusOutlined />}
+        onClick={() => setSizes([...sizes, { width: 1024, height: 1024 }])}
+      >
+        添加画布尺寸
       </Button>
     </Space>
   )

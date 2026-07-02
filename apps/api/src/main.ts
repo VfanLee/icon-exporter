@@ -19,8 +19,8 @@ async function bootstrap() {
   )
 
   const config = new DocumentBuilder()
-    .setTitle('icon-exporter API')
-    .setDescription('Local SVG icon validation and export API')
+    .setTitle('图标导出 API')
+    .setDescription('本地 SVG 图标校验与导出')
     .setVersion('0.1.0')
     .build()
   const document = SwaggerModule.createDocument(app, config)

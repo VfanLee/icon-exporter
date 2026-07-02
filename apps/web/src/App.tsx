@@ -1,3 +1,4 @@
+import { Card, Flex, Layout, Typography } from 'antd'
 import { lazy, Suspense } from 'react'
 
 const ExportButton = lazy(() =>
@@ -10,76 +11,57 @@ const ExportSettings = lazy(() =>
     default: module.ExportSettings,
   })),
 )
-const SvgEditor = lazy(() =>
-  import('./components/SvgEditor').then((module) => ({
-    default: module.SvgEditor,
-  })),
-)
-const SvgPreview = lazy(() =>
-  import('./components/SvgPreview').then((module) => ({
-    default: module.SvgPreview,
-  })),
-)
-const SvgUploader = lazy(() =>
-  import('./components/SvgUploader').then((module) => ({
-    default: module.SvgUploader,
+const EditorWorkspace = lazy(() =>
+  import('./components/EditorWorkspace').then((module) => ({
+    default: module.EditorWorkspace,
   })),
 )
 
+const { Header, Content } = Layout
+const { Title, Text } = Typography
+
 function PanelFallback() {
-  return <div className="panel-fallback">Loading...</div>
+  return (
+    <Flex align="center" justify="center" className="panel-fallback">
+      <Text type="secondary">加载中...</Text>
+    </Flex>
+  )
 }
 
 export default function App() {
   return (
-    <main className="app-shell">
-      <header className="app-header">
-        <div>
-          <h1 className="app-title">icon-exporter</h1>
-          <p className="app-subtitle">Local SVG preview, validation, and multi-format export.</p>
-        </div>
-        <Suspense fallback={<PanelFallback />}>
-          <ExportButton />
-        </Suspense>
-      </header>
+    <Layout className="app-shell">
+      <Header className="app-header">
+        <Flex justify="space-between" align="center" wrap="wrap" gap={16} className="app-header-inner">
+          <div>
+            <Title level={3} className="app-title">
+              图标导出
+            </Title>
+            <Text type="secondary">本地 SVG 预览、校验与多格式导出</Text>
+          </div>
+          <Suspense fallback={<PanelFallback />}>
+            <ExportButton />
+          </Suspense>
+        </Flex>
+      </Header>
 
-      <section className="app-content">
+      <Content className="app-content">
         <div className="content-grid">
-          <div className="main-column">
-            <section className="panel">
-              <h2 className="panel-title">SVG source</h2>
-              <div className="panel-content stack">
-                <Suspense fallback={<PanelFallback />}>
-                  <SvgUploader />
-                </Suspense>
-                <Suspense fallback={<PanelFallback />}>
-                  <SvgEditor />
-                </Suspense>
-              </div>
-            </section>
-
-            <section className="panel">
-              <h2 className="panel-title">Preview</h2>
-              <div className="panel-content">
-                <Suspense fallback={<PanelFallback />}>
-                  <SvgPreview />
-                </Suspense>
-              </div>
-            </section>
+          <div className="workspace-column">
+            <Suspense fallback={<PanelFallback />}>
+              <EditorWorkspace />
+            </Suspense>
           </div>
 
-          <aside className="side-column">
-            <section className="panel">
-              <h2 className="panel-title">Export settings</h2>
-              <div className="panel-content">
-                <Suspense fallback={<PanelFallback />}>
-                  <ExportSettings />
-                </Suspense>
-              </div>
-            </section>
+          <aside className="settings-column">
+            <Card title="导出设置" size="small" bordered={false} className="settings-card">
+              <Suspense fallback={<PanelFallback />}>
+                <ExportSettings />
+              </Suspense>
+            </Card>
           </aside>
         </div>
-      </section>
-    </main>
+      </Content>
+    </Layout>
   )
 }

@@ -1,72 +1,124 @@
-import { Alert, Radio, Space, Typography } from 'antd'
-import { useEffect, useMemo, useState } from 'react'
+import { Alert, Flex, Segmented, Spin, Typography } from 'antd'
+import { useEffect, useState } from 'react'
+import { previewIcon } from '../services/api'
 import { useIconStore } from '../stores/iconStore'
 
 type PreviewBackground = 'transparent' | 'white' | 'dark'
 
-export function SvgPreview() {
-  const svg = useIconStore((state) => state.svg)
-  const validation = useIconStore((state) => state.validation)
-  const sizes = useIconStore((state) => state.sizes)
-  const padding = useIconStore((state) => state.padding)
-  const borderRadius = useIconStore((state) => state.borderRadius)
-  const fit = useIconStore((state) => state.fit)
-  const transparent = useIconStore((state) => state.transparent)
-  const backgroundColor = useIconStore((state) => state.backgroundColor)
-  const [background, setBackground] = useState<PreviewBackground>('transparent')
+const BACKGROUND_OPTIONS = [
+  { label: '透明格', value: 'transparent' },
+  { label: '白底', value: 'white' },
+  { label: '深底', value: 'dark' },
+]
 
-  const previewUrl = useMemo(() => {
-    const blob = new Blob([svg], { type: 'image/svg+xml' })
-    return URL.createObjectURL(blob)
-  }, [svg])
-  const previewSize = sizes[0] ?? { width: 512, height: 512 }
-  const canvasBackground = transparent ? 'transparent' : backgroundColor
-  const canvasStyle = {
-    aspectRatio: `${previewSize.width} / ${previewSize.height}`,
-    backgroundColor: canvasBackground,
-    borderRadius: `${borderRadius * 100}%`,
-    padding: `${padding * 100}%`,
-  }
-  const imageStyle = {
-    objectFit: fit,
-  }
+export function SvgPreview() {
+  const validation = useIconStore((state) => state.validation)
+  const [background, setBackground] = useState<PreviewBackground>('transparent')
+  const [previewUrl, setPreviewUrl] = useState<string>()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string>()
 
   useEffect(() => {
-    return () => URL.revokeObjectURL(previewUrl)
+    let cancelled = false
+    let timer: ReturnType<typeof setTimeout>
+    let objectUrl: string | undefined
+
+    const fetchPreview = async () => {
+      setLoading(true)
+      setError(undefined)
+
+      try {
+        const blob = await previewIcon(useIconStore.getState().buildPreviewRequest())
+        if (cancelled) {
+          return
+        }
+
+        objectUrl = URL.createObjectURL(blob)
+        setPreviewUrl((previous) => {
+          if (previous) {
+            URL.revokeObjectURL(previous)
+          }
+          return objectUrl
+        })
+      } catch (previewError) {
+        if (!cancelled) {
+          setError(previewError instanceof Error ? previewError.message : '预览失败')
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
+    }
+
+    const schedulePreview = () => {
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        void fetchPreview()
+      }, 300)
+    }
+
+    schedulePreview()
+    const unsubscribe = useIconStore.subscribe(schedulePreview)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+      unsubscribe()
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
+      }
+    }
   }, [previewUrl])
 
-  const previewClass = `preview-surface preview-${background}`
+  const stageClass = `preview-stage preview-${background}`
 
   return (
-    <Space direction="vertical" size="middle" className="full-width">
-      {validation && !validation.valid ? (
-        <Alert type="error" showIcon message={validation.warnings.join('; ')} />
-      ) : null}
-      {validation?.valid ? (
-        <Alert
-          type="success"
-          showIcon
-          message={`Valid SVG${validation.viewBox ? ` · viewBox ${validation.viewBox}` : ''}`}
-        />
-      ) : null}
-      <Radio.Group
-        value={background}
-        onChange={(event) => setBackground(event.target.value as PreviewBackground)}
-        optionType="button"
-        buttonStyle="solid"
-      >
-        <Radio.Button value="transparent">Transparent</Radio.Button>
-        <Radio.Button value="white">White</Radio.Button>
-        <Radio.Button value="dark">Dark</Radio.Button>
-      </Radio.Group>
-      <div className={previewClass}>
-        <div className="export-preview-canvas" style={canvasStyle}>
-          <img src={previewUrl} alt="SVG preview" style={imageStyle} />
-        </div>
+    <Flex vertical className="preview-layout full-width">
+      <div className="preview-meta">
+        {validation && !validation.valid ? (
+          <Alert type="error" showIcon message={validation.warnings.join('；')} />
+        ) : null}
+        {validation?.valid ? (
+          <Alert
+            type="success"
+            showIcon
+            message={`SVG 有效${validation.viewBox ? ` · viewBox ${validation.viewBox}` : ''}`}
+          />
+        ) : null}
+        {error ? <Alert type="error" showIcon message={error} /> : null}
       </div>
-      <Typography.Text type="secondary">
-        Preview uses the first export size and current export settings.
-      </Typography.Text>
-    </Space>
+
+      <Flex justify="space-between" align="center" wrap="wrap" gap={12} className="preview-toolbar">
+        <Segmented
+          value={background}
+          options={BACKGROUND_OPTIONS}
+          onChange={(value) => setBackground(value as PreviewBackground)}
+        />
+        <Typography.Text type="secondary">预览即导出画布 · 下方背景仅用于检视透明区域</Typography.Text>
+      </Flex>
+
+      <div className={stageClass}>
+        {loading && !previewUrl ? <Spin size="large" /> : null}
+        {previewUrl ? (
+          <div className="export-preview-canvas">
+            <img src={previewUrl} alt="Sharp 预览" />
+            {loading ? (
+              <div className="preview-loading-overlay">
+                <Spin />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+    </Flex>
   )
 }
