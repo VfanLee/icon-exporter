@@ -10,7 +10,6 @@ export type ResizePosition =
   | 'left bottom'
   | 'left'
   | 'left top'
-export type ResizeKernel = 'nearest' | 'linear' | 'cubic' | 'lanczos2' | 'lanczos3' | 'mitchell'
 
 export interface ExportSize {
   width: number
@@ -28,15 +27,8 @@ export interface ExportQuality {
   avif: number
 }
 
-export interface ExportRasterOptions {
-  density: number
-  limitInputPixels: number
-}
-
 export interface ExportResizeOptions {
   position: ResizePosition
-  kernel: ResizeKernel
-  withoutEnlargement: boolean
 }
 
 export interface ExportTransformOptions {
@@ -67,42 +59,9 @@ export interface ExportEffectsOptions {
   normalise: boolean
 }
 
-export interface ExportAlphaOptions {
-  ensureAlpha: boolean
-  removeAlpha: boolean
-}
-
 export interface ExportTrimOptions {
   enabled: boolean
   threshold: number
-}
-
-export interface ExportPngOptions {
-  compressionLevel: number
-  palette: boolean
-  effort: number
-}
-
-export interface ExportWebpOptions {
-  lossless: boolean
-  nearLossless: boolean
-  effort: number
-  smartSubsample: boolean
-}
-
-export interface ExportJpegOptions {
-  progressive: boolean
-  mozjpeg: boolean
-  chromaSubsampling: string
-}
-
-export interface ExportAvifOptions {
-  lossless: boolean
-  effort: number
-}
-
-export interface ExportMetadataOptions {
-  strip: boolean
 }
 
 export interface ExportIconRequest {
@@ -115,17 +74,10 @@ export interface ExportIconRequest {
   borderRadius: number
   fit: FitMode
   quality: ExportQuality
-  raster?: ExportRasterOptions
   resize?: ExportResizeOptions
   transform?: ExportTransformOptions
   effects?: ExportEffectsOptions
-  alpha?: ExportAlphaOptions
   trim?: ExportTrimOptions
-  png?: ExportPngOptions
-  webp?: ExportWebpOptions
-  jpeg?: ExportJpegOptions
-  avif?: ExportAvifOptions
-  metadata?: ExportMetadataOptions
 }
 
 export interface PreviewIconRequest extends ExportIconRequest {

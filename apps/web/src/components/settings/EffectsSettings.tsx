@@ -8,7 +8,7 @@ export function EffectsSettings() {
 
   return (
     <>
-      <SettingField hint="sharpen(sigma)">
+      <SettingField>
         <Checkbox checked={store.sharpenEnabled} onChange={(event) => store.setSharpenEnabled(event.target.checked)}>
           锐化
         </Checkbox>
@@ -20,23 +20,23 @@ export function EffectsSettings() {
         </SettingField>
       ) : null}
 
-      <SettingField label="模糊" hint="blur(sigma)">
+      <SettingField label="模糊">
         <Slider min={0} max={20} step={0.1} value={store.blur} onChange={store.setBlur} />
       </SettingField>
 
-      <SettingField hint="greyscale()">
+      <SettingField>
         <Checkbox checked={store.greyscale} onChange={(event) => store.setGreyscale(event.target.checked)}>
           灰度
         </Checkbox>
       </SettingField>
 
-      <SettingField hint="negate()">
+      <SettingField>
         <Checkbox checked={store.negate} onChange={(event) => store.setNegate(event.target.checked)}>
           反色
         </Checkbox>
       </SettingField>
 
-      <SettingField label="着色" hint="tint(color)">
+      <SettingField label="着色">
         <Space wrap>
           <ColorPicker
             value={store.tint ?? '#ffffff'}
@@ -49,23 +49,23 @@ export function EffectsSettings() {
         </Space>
       </SettingField>
 
-      <SettingField label={`亮度（${store.modulateBrightness}）`} hint="modulate({ brightness })">
+      <SettingField label={`亮度（${store.modulateBrightness}）`}>
         <Slider min={0} max={3} step={0.05} value={store.modulateBrightness} onChange={store.setModulateBrightness} />
       </SettingField>
 
-      <SettingField label={`饱和度（${store.modulateSaturation}）`} hint="modulate({ saturation })">
+      <SettingField label={`饱和度（${store.modulateSaturation}）`}>
         <Slider min={0} max={3} step={0.05} value={store.modulateSaturation} onChange={store.setModulateSaturation} />
       </SettingField>
 
-      <SettingField label={`色相（${store.modulateHue}°）`} hint="modulate({ hue })">
+      <SettingField label={`色相（${store.modulateHue}°）`}>
         <Slider min={0} max={360} step={1} value={store.modulateHue} onChange={store.setModulateHue} />
       </SettingField>
 
-      <SettingField label={`伽马（${store.gamma}）`} hint="gamma(value)">
+      <SettingField label={`伽马（${store.gamma}）`}>
         <Slider min={1} max={3} step={0.05} value={store.gamma} onChange={store.setGamma} />
       </SettingField>
 
-      <SettingField hint="normalise()">
+      <SettingField>
         <Checkbox checked={store.normalise} onChange={(event) => store.setNormalise(event.target.checked)}>
           自动均衡
         </Checkbox>

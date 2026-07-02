@@ -14,7 +14,7 @@ export function BackgroundSettings() {
         </Checkbox>
       </SettingField>
 
-      <SettingField label="画布背景色" hint="填充整个导出画布（红色区域）">
+      <SettingField label="画布背景色" hint="填充整个导出画布">
         <Space>
           <ColorPicker
             value={store.backgroundColor}

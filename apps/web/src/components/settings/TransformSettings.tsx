@@ -7,17 +7,17 @@ export function TransformSettings() {
 
   return (
     <>
-      <SettingField label={`旋转（${store.rotate}°）`} hint="rotate(angle)">
+      <SettingField label={`旋转（${store.rotate}°）`}>
         <Slider min={0} max={360} step={1} value={store.rotate} onChange={store.setRotate} />
       </SettingField>
 
-      <SettingField hint="flip()">
+      <SettingField>
         <Checkbox checked={store.flip} onChange={(event) => store.setFlip(event.target.checked)}>
           垂直翻转
         </Checkbox>
       </SettingField>
 
-      <SettingField hint="flop()">
+      <SettingField>
         <Checkbox checked={store.flop} onChange={(event) => store.setFlop(event.target.checked)}>
           水平翻转
         </Checkbox>

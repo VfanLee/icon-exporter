@@ -7,14 +7,14 @@ export function TrimSettings() {
 
   return (
     <>
-      <SettingField hint="trim()">
+      <SettingField>
         <Checkbox checked={store.trimEnabled} onChange={(event) => store.setTrimEnabled(event.target.checked)}>
           自动裁剪透明边缘
         </Checkbox>
       </SettingField>
 
       {store.trimEnabled ? (
-        <SettingField label={`裁剪阈值（${store.trimThreshold}）`} hint="trim({ threshold })">
+        <SettingField label={`裁剪阈值（${store.trimThreshold}）`}>
           <Slider min={0} max={255} step={1} value={store.trimThreshold} onChange={store.setTrimThreshold} />
         </SettingField>
       ) : null}

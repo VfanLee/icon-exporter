@@ -1,23 +1,15 @@
 import { create } from 'zustand'
 import {
-  DEFAULT_AVIF_OPTIONS,
   DEFAULT_EFFECTS_OPTIONS,
   DEFAULT_EXPORT_OPTIONS,
-  DEFAULT_JPEG_OPTIONS,
-  DEFAULT_METADATA_OPTIONS,
-  DEFAULT_PNG_OPTIONS,
-  DEFAULT_RASTER_OPTIONS,
   DEFAULT_RESIZE_OPTIONS,
   DEFAULT_SIZES,
   DEFAULT_TRANSFORM_OPTIONS,
   DEFAULT_TRIM_OPTIONS,
-  DEFAULT_WEBP_OPTIONS,
   type ExportFormat,
   type ExportIconRequest,
   type FitMode,
   type PreviewIconRequest,
-  type ResizeKernel,
-  type ResizePosition,
   type ExportSize,
   type ValidateSvgResponse,
 } from '@icon-exporter/shared'
@@ -41,11 +33,7 @@ interface IconState {
   jpegQuality: number
   avifQuality: number
   previewSize: ExportSize
-  rasterDensity: number
-  rasterLimitInputPixels: number
-  resizePosition: ResizePosition
-  resizeKernel: ResizeKernel
-  withoutEnlargement: boolean
+  resizePosition: (typeof DEFAULT_RESIZE_OPTIONS)['position']
   rotate: number
   flip: boolean
   flop: boolean
@@ -60,23 +48,8 @@ interface IconState {
   modulateHue: number
   gamma: number
   normalise: boolean
-  ensureAlpha: boolean
-  removeAlpha: boolean
   trimEnabled: boolean
   trimThreshold: number
-  pngCompressionLevel: number
-  pngPalette: boolean
-  pngEffort: number
-  webpLossless: boolean
-  webpNearLossless: boolean
-  webpEffort: number
-  webpSmartSubsample: boolean
-  jpegProgressive: boolean
-  jpegMozjpeg: boolean
-  jpegChromaSubsampling: string
-  avifLossless: boolean
-  avifEffort: number
-  stripMetadata: boolean
   validation?: ValidateSvgResponse
   setSvg: (svg: string) => void
   setFilename: (filename: string) => void
@@ -91,11 +64,7 @@ interface IconState {
   setJpegQuality: (quality: number) => void
   setAvifQuality: (quality: number) => void
   setPreviewSize: (size: ExportSize) => void
-  setRasterDensity: (density: number) => void
-  setRasterLimitInputPixels: (limit: number) => void
-  setResizePosition: (position: ResizePosition) => void
-  setResizeKernel: (kernel: ResizeKernel) => void
-  setWithoutEnlargement: (value: boolean) => void
+  setResizePosition: (position: IconState['resizePosition']) => void
   setRotate: (rotate: number) => void
   setFlip: (flip: boolean) => void
   setFlop: (flop: boolean) => void
@@ -110,23 +79,8 @@ interface IconState {
   setModulateHue: (value: number) => void
   setGamma: (gamma: number) => void
   setNormalise: (normalise: boolean) => void
-  setEnsureAlpha: (value: boolean) => void
-  setRemoveAlpha: (value: boolean) => void
   setTrimEnabled: (enabled: boolean) => void
   setTrimThreshold: (threshold: number) => void
-  setPngCompressionLevel: (value: number) => void
-  setPngPalette: (value: boolean) => void
-  setPngEffort: (value: number) => void
-  setWebpLossless: (value: boolean) => void
-  setWebpNearLossless: (value: boolean) => void
-  setWebpEffort: (value: number) => void
-  setWebpSmartSubsample: (value: boolean) => void
-  setJpegProgressive: (value: boolean) => void
-  setJpegMozjpeg: (value: boolean) => void
-  setJpegChromaSubsampling: (value: string) => void
-  setAvifLossless: (value: boolean) => void
-  setAvifEffort: (value: number) => void
-  setStripMetadata: (value: boolean) => void
   setValidation: (validation?: ValidateSvgResponse) => void
   buildExportRequest: () => ExportIconRequest
   buildPreviewRequest: () => PreviewIconRequest
@@ -150,14 +104,8 @@ function buildBaseRequest(state: IconState): ExportIconRequest {
       jpeg: state.jpegQuality,
       avif: state.avifQuality,
     },
-    raster: {
-      density: state.rasterDensity,
-      limitInputPixels: state.rasterLimitInputPixels,
-    },
     resize: {
       position: state.resizePosition,
-      kernel: state.resizeKernel,
-      withoutEnlargement: state.withoutEnlargement,
     },
     transform: {
       rotate: state.rotate,
@@ -178,36 +126,9 @@ function buildBaseRequest(state: IconState): ExportIconRequest {
       gamma: state.gamma,
       normalise: state.normalise,
     },
-    alpha: {
-      ensureAlpha: state.ensureAlpha,
-      removeAlpha: state.removeAlpha,
-    },
     trim: {
       enabled: state.trimEnabled,
       threshold: state.trimThreshold,
-    },
-    png: {
-      compressionLevel: state.pngCompressionLevel,
-      palette: state.pngPalette,
-      effort: state.pngEffort,
-    },
-    webp: {
-      lossless: state.webpLossless,
-      nearLossless: state.webpNearLossless,
-      effort: state.webpEffort,
-      smartSubsample: state.webpSmartSubsample,
-    },
-    jpeg: {
-      progressive: state.jpegProgressive,
-      mozjpeg: state.jpegMozjpeg,
-      chromaSubsampling: state.jpegChromaSubsampling,
-    },
-    avif: {
-      lossless: state.avifLossless,
-      effort: state.avifEffort,
-    },
-    metadata: {
-      strip: state.stripMetadata,
     },
   }
 }
@@ -226,11 +147,7 @@ export const useIconStore = create<IconState>((set, get) => ({
   jpegQuality: DEFAULT_EXPORT_OPTIONS.quality.jpeg,
   avifQuality: DEFAULT_EXPORT_OPTIONS.quality.avif,
   previewSize: { width: 256, height: 256 },
-  rasterDensity: DEFAULT_RASTER_OPTIONS.density,
-  rasterLimitInputPixels: DEFAULT_RASTER_OPTIONS.limitInputPixels,
   resizePosition: DEFAULT_RESIZE_OPTIONS.position,
-  resizeKernel: DEFAULT_RESIZE_OPTIONS.kernel,
-  withoutEnlargement: DEFAULT_RESIZE_OPTIONS.withoutEnlargement,
   rotate: DEFAULT_TRANSFORM_OPTIONS.rotate,
   flip: DEFAULT_TRANSFORM_OPTIONS.flip,
   flop: DEFAULT_TRANSFORM_OPTIONS.flop,
@@ -245,23 +162,8 @@ export const useIconStore = create<IconState>((set, get) => ({
   modulateHue: DEFAULT_EFFECTS_OPTIONS.modulate.hue,
   gamma: DEFAULT_EFFECTS_OPTIONS.gamma,
   normalise: DEFAULT_EFFECTS_OPTIONS.normalise,
-  ensureAlpha: DEFAULT_EXPORT_OPTIONS.alpha.ensureAlpha,
-  removeAlpha: DEFAULT_EXPORT_OPTIONS.alpha.removeAlpha,
   trimEnabled: DEFAULT_TRIM_OPTIONS.enabled,
   trimThreshold: DEFAULT_TRIM_OPTIONS.threshold,
-  pngCompressionLevel: DEFAULT_PNG_OPTIONS.compressionLevel,
-  pngPalette: DEFAULT_PNG_OPTIONS.palette,
-  pngEffort: DEFAULT_PNG_OPTIONS.effort,
-  webpLossless: DEFAULT_WEBP_OPTIONS.lossless,
-  webpNearLossless: DEFAULT_WEBP_OPTIONS.nearLossless,
-  webpEffort: DEFAULT_WEBP_OPTIONS.effort,
-  webpSmartSubsample: DEFAULT_WEBP_OPTIONS.smartSubsample,
-  jpegProgressive: DEFAULT_JPEG_OPTIONS.progressive,
-  jpegMozjpeg: DEFAULT_JPEG_OPTIONS.mozjpeg,
-  jpegChromaSubsampling: DEFAULT_JPEG_OPTIONS.chromaSubsampling,
-  avifLossless: DEFAULT_AVIF_OPTIONS.lossless,
-  avifEffort: DEFAULT_AVIF_OPTIONS.effort,
-  stripMetadata: DEFAULT_METADATA_OPTIONS.strip,
   setSvg: (svg) => set({ svg }),
   setFilename: (filename) => set({ filename }),
   setSizes: (sizes) => set({ sizes }),
@@ -275,11 +177,7 @@ export const useIconStore = create<IconState>((set, get) => ({
   setJpegQuality: (jpegQuality) => set({ jpegQuality }),
   setAvifQuality: (avifQuality) => set({ avifQuality }),
   setPreviewSize: (previewSize) => set({ previewSize }),
-  setRasterDensity: (rasterDensity) => set({ rasterDensity }),
-  setRasterLimitInputPixels: (rasterLimitInputPixels) => set({ rasterLimitInputPixels }),
   setResizePosition: (resizePosition) => set({ resizePosition }),
-  setResizeKernel: (resizeKernel) => set({ resizeKernel }),
-  setWithoutEnlargement: (withoutEnlargement) => set({ withoutEnlargement }),
   setRotate: (rotate) => set({ rotate }),
   setFlip: (flip) => set({ flip }),
   setFlop: (flop) => set({ flop }),
@@ -294,23 +192,8 @@ export const useIconStore = create<IconState>((set, get) => ({
   setModulateHue: (modulateHue) => set({ modulateHue }),
   setGamma: (gamma) => set({ gamma }),
   setNormalise: (normalise) => set({ normalise }),
-  setEnsureAlpha: (ensureAlpha) => set({ ensureAlpha }),
-  setRemoveAlpha: (removeAlpha) => set({ removeAlpha }),
   setTrimEnabled: (trimEnabled) => set({ trimEnabled }),
   setTrimThreshold: (trimThreshold) => set({ trimThreshold }),
-  setPngCompressionLevel: (pngCompressionLevel) => set({ pngCompressionLevel }),
-  setPngPalette: (pngPalette) => set({ pngPalette }),
-  setPngEffort: (pngEffort) => set({ pngEffort }),
-  setWebpLossless: (webpLossless) => set({ webpLossless }),
-  setWebpNearLossless: (webpNearLossless) => set({ webpNearLossless }),
-  setWebpEffort: (webpEffort) => set({ webpEffort }),
-  setWebpSmartSubsample: (webpSmartSubsample) => set({ webpSmartSubsample }),
-  setJpegProgressive: (jpegProgressive) => set({ jpegProgressive }),
-  setJpegMozjpeg: (jpegMozjpeg) => set({ jpegMozjpeg }),
-  setJpegChromaSubsampling: (jpegChromaSubsampling) => set({ jpegChromaSubsampling }),
-  setAvifLossless: (avifLossless) => set({ avifLossless }),
-  setAvifEffort: (avifEffort) => set({ avifEffort }),
-  setStripMetadata: (stripMetadata) => set({ stripMetadata }),
   setValidation: (validation) => set({ validation }),
   buildExportRequest: () => buildBaseRequest(get()),
   buildPreviewRequest: () => ({
