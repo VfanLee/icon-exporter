@@ -15,9 +15,13 @@ import {
 } from '@icon-exporter/shared'
 
 const SAMPLE_SVG = `<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-  <rect width="128" height="128" rx="28" fill="#1677ff"/>
-  <path d="M36 68L56 88L94 40" fill="none" stroke="white" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="64" r="48" fill="#8c8c8c"/>
+  <circle cx="48" cy="54" r="6" fill="#ffffff"/>
+  <circle cx="80" cy="54" r="6" fill="#ffffff"/>
+  <path d="M44 78c8 12 32 12 40 0" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
 </svg>`
+
+const DEFAULT_PREVIEW_SIZE: ExportSize = { width: 512, height: 512 }
 
 interface IconState {
   svg: string
@@ -86,12 +90,14 @@ interface IconState {
   buildPreviewRequest: () => PreviewIconRequest
 }
 
-function buildBaseRequest(state: IconState): ExportIconRequest {
+function buildRenderOptions(
+  state: IconState,
+): Pick<
+  ExportIconRequest,
+  'svg' | 'background' | 'padding' | 'borderRadius' | 'fit' | 'resize' | 'transform' | 'effects' | 'trim'
+> {
   return {
     svg: state.svg,
-    filename: state.filename || DEFAULT_EXPORT_OPTIONS.filename,
-    sizes: state.sizes,
-    formats: state.formats,
     background: {
       transparent: state.transparent,
       color: state.backgroundColor,
@@ -99,11 +105,6 @@ function buildBaseRequest(state: IconState): ExportIconRequest {
     padding: state.padding,
     borderRadius: state.borderRadius,
     fit: state.fit,
-    quality: {
-      webp: state.webpQuality,
-      jpeg: state.jpegQuality,
-      avif: state.avifQuality,
-    },
     resize: {
       position: state.resizePosition,
     },
@@ -146,7 +147,7 @@ export const useIconStore = create<IconState>((set, get) => ({
   webpQuality: DEFAULT_EXPORT_OPTIONS.quality.webp,
   jpegQuality: DEFAULT_EXPORT_OPTIONS.quality.jpeg,
   avifQuality: DEFAULT_EXPORT_OPTIONS.quality.avif,
-  previewSize: { width: 256, height: 256 },
+  previewSize: DEFAULT_PREVIEW_SIZE,
   resizePosition: DEFAULT_RESIZE_OPTIONS.position,
   rotate: DEFAULT_TRANSFORM_OPTIONS.rotate,
   flip: DEFAULT_TRANSFORM_OPTIONS.flip,
@@ -195,9 +196,31 @@ export const useIconStore = create<IconState>((set, get) => ({
   setTrimEnabled: (trimEnabled) => set({ trimEnabled }),
   setTrimThreshold: (trimThreshold) => set({ trimThreshold }),
   setValidation: (validation) => set({ validation }),
-  buildExportRequest: () => buildBaseRequest(get()),
-  buildPreviewRequest: () => ({
-    ...buildBaseRequest(get()),
-    previewSize: get().previewSize,
-  }),
+  buildExportRequest: () => {
+    const state = get()
+
+    return {
+      ...buildRenderOptions(state),
+      filename: state.filename || DEFAULT_EXPORT_OPTIONS.filename,
+      sizes: state.sizes,
+      formats: state.formats,
+      quality: {
+        webp: state.webpQuality,
+        jpeg: state.jpegQuality,
+        avif: state.avifQuality,
+      },
+    }
+  },
+  buildPreviewRequest: () => {
+    const state = get()
+
+    return {
+      ...buildRenderOptions(state),
+      filename: DEFAULT_EXPORT_OPTIONS.filename,
+      sizes: [state.previewSize],
+      formats: ['png'],
+      quality: DEFAULT_EXPORT_OPTIONS.quality,
+      previewSize: state.previewSize,
+    }
+  },
 }))

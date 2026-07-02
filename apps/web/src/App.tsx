@@ -1,14 +1,9 @@
 import { Card, Flex, Layout, Typography } from 'antd'
 import { lazy, Suspense } from 'react'
 
-const ExportButton = lazy(() =>
-  import('./components/ExportButton').then((module) => ({
-    default: module.ExportButton,
-  })),
-)
-const ExportSettings = lazy(() =>
-  import('./components/ExportSettings').then((module) => ({
-    default: module.ExportSettings,
+const SettingsPanel = lazy(() =>
+  import('./components/SettingsPanel').then((module) => ({
+    default: module.SettingsPanel,
   })),
 )
 const EditorWorkspace = lazy(() =>
@@ -35,13 +30,10 @@ export default function App() {
         <Flex justify="space-between" align="center" wrap="wrap" gap={16} className="app-header-inner">
           <div>
             <Title level={3} className="app-title">
-              图标导出
+              免费图标导出
             </Title>
             <Text type="secondary">本地 SVG 预览、校验与多格式导出</Text>
           </div>
-          <Suspense fallback={<PanelFallback />}>
-            <ExportButton />
-          </Suspense>
         </Flex>
       </Header>
 
@@ -54,9 +46,9 @@ export default function App() {
           </div>
 
           <aside className="settings-column">
-            <Card title="导出设置" size="small" bordered={false} className="settings-card">
+            <Card size="small" variant="borderless" className="settings-card">
               <Suspense fallback={<PanelFallback />}>
-                <ExportSettings />
+                <SettingsPanel />
               </Suspense>
             </Card>
           </aside>

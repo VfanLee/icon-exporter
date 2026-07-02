@@ -1,15 +1,7 @@
 export type ExportFormat = 'png' | 'webp' | 'jpeg' | 'avif' | 'svg'
 export type FitMode = 'contain' | 'cover' | 'fill' | 'inside' | 'outside'
 export type ResizePosition =
-  | 'center'
-  | 'top'
-  | 'right top'
-  | 'right'
-  | 'right bottom'
-  | 'bottom'
-  | 'left bottom'
-  | 'left'
-  | 'left top'
+  'center' | 'top' | 'right top' | 'right' | 'right bottom' | 'bottom' | 'left bottom' | 'left' | 'left top'
 
 export interface ExportSize {
   width: number

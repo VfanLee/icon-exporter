@@ -1,16 +1,13 @@
 import { DownloadOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
-import { Button, message, Space } from 'antd'
+import { Button, message } from 'antd'
 import { useState } from 'react'
 import { exportIcon, validateSvg } from '../services/api'
 import { useIconStore } from '../stores/iconStore'
 
-export function ExportButton() {
+export function ValidateSvgButton() {
   const [validating, setValidating] = useState(false)
-  const [exporting, setExporting] = useState(false)
   const svg = useIconStore((state) => state.svg)
-  const filename = useIconStore((state) => state.filename)
   const setValidation = useIconStore((state) => state.setValidation)
-  const buildExportRequest = useIconStore((state) => state.buildExportRequest)
 
   const handleValidate = async () => {
     setValidating(true)
@@ -28,6 +25,18 @@ export function ExportButton() {
       setValidating(false)
     }
   }
+
+  return (
+    <Button icon={<SafetyCertificateOutlined />} loading={validating} onClick={handleValidate}>
+      校验 SVG
+    </Button>
+  )
+}
+
+export function ExportZipButton({ block = false }: { block?: boolean }) {
+  const [exporting, setExporting] = useState(false)
+  const filename = useIconStore((state) => state.filename)
+  const buildExportRequest = useIconStore((state) => state.buildExportRequest)
 
   const handleExport = async () => {
     setExporting(true)
@@ -48,13 +57,8 @@ export function ExportButton() {
   }
 
   return (
-    <Space wrap>
-      <Button icon={<SafetyCertificateOutlined />} loading={validating} onClick={handleValidate}>
-        校验 SVG
-      </Button>
-      <Button type="primary" icon={<DownloadOutlined />} loading={exporting} onClick={handleExport}>
-        导出 ZIP
-      </Button>
-    </Space>
+    <Button type="primary" block={block} icon={<DownloadOutlined />} loading={exporting} onClick={handleExport}>
+      导出 ZIP
+    </Button>
   )
 }

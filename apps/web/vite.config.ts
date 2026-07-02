@@ -38,4 +38,7 @@ export default defineConfig({
       '/health': 'http://localhost:3000',
     },
   },
+  optimizeDeps: {
+    include: ['@uiw/react-codemirror', '@codemirror/lang-xml', '@codemirror/theme-one-dark', '@codemirror/view'],
+  },
 })

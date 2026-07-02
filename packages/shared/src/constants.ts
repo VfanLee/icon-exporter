@@ -9,15 +9,7 @@ import type {
   ResizePosition,
 } from './export.types'
 
-export const DEFAULT_SIZES: ExportSize[] = [
-  { width: 16, height: 16 },
-  { width: 24, height: 24 },
-  { width: 32, height: 32 },
-  { width: 64, height: 64 },
-  { width: 128, height: 128 },
-  { width: 256, height: 256 },
-  { width: 512, height: 512 },
-]
+export const DEFAULT_SIZES: ExportSize[] = [{ width: 512, height: 512 }]
 
 export const EXPORT_FORMATS: ExportFormat[] = ['png', 'webp', 'jpeg', 'avif', 'svg']
 export const FIT_MODES: FitMode[] = ['contain', 'cover', 'fill', 'inside', 'outside']

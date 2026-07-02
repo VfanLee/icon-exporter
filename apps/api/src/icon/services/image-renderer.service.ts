@@ -50,6 +50,12 @@ export class ImageRendererService {
 
     if (transform.rotate !== 0) {
       icon = icon.rotate(transform.rotate, { background: this.transparentBackground() })
+      icon = icon.resize({
+        width: innerWidth,
+        height: innerHeight,
+        fit: 'inside',
+        background: this.transparentBackground(),
+      })
     }
     if (transform.flip) {
       icon = icon.flip()
@@ -73,11 +79,7 @@ export class ImageRendererService {
     if (effects.negate) {
       icon = icon.negate()
     }
-    if (
-      effects.modulate.brightness !== 1 ||
-      effects.modulate.saturation !== 1 ||
-      effects.modulate.hue !== 0
-    ) {
+    if (effects.modulate.brightness !== 1 || effects.modulate.saturation !== 1 || effects.modulate.hue !== 0) {
       icon = icon.modulate({
         brightness: effects.modulate.brightness,
         saturation: effects.modulate.saturation,
@@ -171,9 +173,6 @@ export class ImageRendererService {
       </svg>`,
     )
 
-    return sharp(maskSvg)
-      .resize(size.width, size.height, { fit: 'fill' })
-      .png()
-      .toBuffer()
+    return sharp(maskSvg).resize(size.width, size.height, { fit: 'fill' }).png().toBuffer()
   }
 }

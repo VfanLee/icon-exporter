@@ -1,12 +1,9 @@
 import { CodeOutlined, EyeOutlined } from '@ant-design/icons'
-import { Card, Tabs } from 'antd'
-import { lazy, Suspense } from 'react'
+import { Card, Space, Tabs } from 'antd'
+import { lazy, Suspense, useState } from 'react'
+import { ValidateSvgButton } from './ExportButton'
+import { SvgEditor } from './SvgEditor'
 
-const SvgEditor = lazy(() =>
-  import('./SvgEditor').then((module) => ({
-    default: module.SvgEditor,
-  })),
-)
 const SvgPreview = lazy(() =>
   import('./SvgPreview').then((module) => ({
     default: module.SvgPreview,
@@ -23,15 +20,22 @@ function TabFallback() {
 }
 
 export function EditorWorkspace() {
+  const [activeKey, setActiveKey] = useState('preview')
+
   return (
-    <Card size="small" bordered={false} className="workspace-card">
+    <Card size="small" variant="borderless" className="workspace-card">
       <Tabs
         className="workspace-tabs"
-        defaultActiveKey="preview"
+        activeKey={activeKey}
+        onChange={setActiveKey}
+        destroyOnHidden={false}
         tabBarExtraContent={
-          <Suspense fallback={null}>
-            <SvgUploader />
-          </Suspense>
+          <Space wrap>
+            {activeKey === 'source' ? <ValidateSvgButton /> : null}
+            <Suspense fallback={null}>
+              <SvgUploader />
+            </Suspense>
+          </Space>
         }
         items={[
           {
@@ -39,15 +43,11 @@ export function EditorWorkspace() {
             label: (
               <span className="workspace-tab-label">
                 <CodeOutlined />
-                SVG 源码
+                源码
               </span>
             ),
             children: (
-              <div className="workspace-pane workspace-source">
-                <Suspense fallback={<TabFallback />}>
-                  <SvgEditor />
-                </Suspense>
-              </div>
+              <div className="workspace-pane workspace-source">{activeKey === 'source' ? <SvgEditor /> : null}</div>
             ),
           },
           {

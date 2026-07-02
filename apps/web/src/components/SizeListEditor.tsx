@@ -74,7 +74,7 @@ export function SizeListEditor() {
         icon={<PlusOutlined />}
         onClick={() => setSizes([...sizes, { width: 1024, height: 1024 }])}
       >
-        添加画布尺寸
+        添加导出尺寸
       </Button>
     </Space>
   )

@@ -77,7 +77,10 @@ body {
   .ant-card-body {
     flex: 1;
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px 12px;
   }
 }
 
@@ -95,6 +98,74 @@ body {
   align-items: center;
   gap: 8px;
   font-weight: 500;
+}
+
+.settings-section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.settings-section-scope {
+  font-size: 12px;
+  font-weight: 400;
+  padding-left: 22px;
+  line-height: 1.4;
+}
+
+.settings-panel-desc {
+  margin: 0 0 12px !important;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.settings-panel-alert {
+  margin-bottom: 12px;
+}
+
+.settings-subsection-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.settings-tab-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings-tabs {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+
+  .ant-tabs-nav {
+    flex-shrink: 0;
+    margin-bottom: 0;
+  }
+
+  .ant-tabs-content-holder {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .ant-tabs-tabpane {
+    padding-top: 12px;
+  }
+}
+
+.settings-tab-pane {
+  padding-bottom: 4px;
+}
+
+.settings-action {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
 }
 
 .settings-collapse {
@@ -145,9 +216,16 @@ body {
   .ant-tabs-content-holder {
     flex: 1;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
-  .ant-tabs-content,
+  .ant-tabs-content {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+  }
+
   .ant-tabs-tabpane {
     height: 100%;
   }
@@ -155,6 +233,8 @@ body {
   .ant-tabs-tabpane-active {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-height: 0;
   }
 }
 
@@ -172,16 +252,39 @@ body {
   flex-direction: column;
 }
 
+.workspace-source {
+  overflow: hidden;
+}
+
 .workspace-editor {
   flex: 1;
   min-height: 0;
   height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    flex: 1;
+    min-height: 0;
+    height: 100% !important;
+  }
 
   .cm-editor {
-    height: 100%;
-    border: 1px solid #f0f0f0;
+    height: 100% !important;
+    border: 1px solid #30363d;
     border-radius: 8px;
     overflow: hidden;
+    font-size: 13px;
+  }
+
+  .cm-scroller {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    line-height: 1.6;
+  }
+
+  .cm-gutters {
+    border-right: 1px solid #30363d;
   }
 }
 

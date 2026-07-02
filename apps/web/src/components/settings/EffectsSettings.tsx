@@ -42,7 +42,10 @@ export function EffectsSettings() {
             value={store.tint ?? '#ffffff'}
             onChange={(color: Color) => store.setTint(color.toHexString())}
           />
-          <Checkbox checked={store.tint !== null} onChange={(event) => store.setTint(event.target.checked ? '#ffffff' : null)}>
+          <Checkbox
+            checked={store.tint !== null}
+            onChange={(event) => store.setTint(event.target.checked ? '#ffffff' : null)}
+          >
             启用着色
           </Checkbox>
           {store.tint ? <Typography.Text code>{store.tint}</Typography.Text> : null}

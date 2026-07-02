@@ -1,4 +1,4 @@
-import { Alert, Flex, Segmented, Spin, Typography } from 'antd'
+import { Alert, Flex, Segmented, Select, Spin, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 import { previewIcon } from '../services/api'
 import { useIconStore } from '../stores/iconStore'
@@ -11,12 +11,21 @@ const BACKGROUND_OPTIONS = [
   { label: '深底', value: 'dark' },
 ]
 
+const PREVIEW_SIZE_PRESETS = [128, 256, 512, 1024]
+
 export function SvgPreview() {
   const validation = useIconStore((state) => state.validation)
+  const previewSize = useIconStore((state) => state.previewSize)
+  const setPreviewSize = useIconStore((state) => state.setPreviewSize)
   const [background, setBackground] = useState<PreviewBackground>('transparent')
   const [previewUrl, setPreviewUrl] = useState<string>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>()
+
+  const previewSizeOptions = PREVIEW_SIZE_PRESETS.map((size) => ({
+    label: `${size} × ${size}`,
+    value: size,
+  }))
 
   useEffect(() => {
     let cancelled = false
@@ -98,12 +107,22 @@ export function SvgPreview() {
       </div>
 
       <Flex justify="space-between" align="center" wrap="wrap" gap={12} className="preview-toolbar">
-        <Segmented
-          value={background}
-          options={BACKGROUND_OPTIONS}
-          onChange={(value) => setBackground(value as PreviewBackground)}
-        />
-        <Typography.Text type="secondary">预览即导出画布 · 下方背景仅用于检视透明区域</Typography.Text>
+        <Flex align="center" wrap="wrap" gap={12}>
+          <Segmented
+            value={background}
+            options={BACKGROUND_OPTIONS}
+            onChange={(value) => setBackground(value as PreviewBackground)}
+          />
+          <Select
+            value={previewSize.width}
+            options={previewSizeOptions}
+            onChange={(size) => setPreviewSize({ width: size, height: size })}
+            style={{ minWidth: 140 }}
+          />
+        </Flex>
+        <Typography.Text type="secondary">
+          预览分辨率仅用于检视，与右侧「导出尺寸」无关 · 下方背景仅用于检视透明区域
+        </Typography.Text>
       </Flex>
 
       <div className={stageClass}>

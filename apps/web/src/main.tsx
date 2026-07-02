@@ -15,8 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           colorPrimary: '#1677ff',
           colorBgLayout: '#f5f7fb',
           colorBgContainer: '#ffffff',
-          fontFamily:
-            'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         },
         components: {
           Card: {

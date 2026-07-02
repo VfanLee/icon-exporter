@@ -9,14 +9,14 @@ export const FIT_MODE_LABELS: Record<FitMode, string> = {
 }
 
 export const POSITION_LABELS: Record<ResizePosition, string> = {
-  center: '居中',
-  top: '顶部',
+  'center': '居中',
+  'top': '顶部',
   'right top': '右上',
-  right: '右侧',
+  'right': '右侧',
   'right bottom': '右下',
-  bottom: '底部',
+  'bottom': '底部',
   'left bottom': '左下',
-  left: '左侧',
+  'left': '左侧',
   'left top': '左上',
 }
 
