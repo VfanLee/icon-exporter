@@ -1,1 +1,0 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/components/exportbutton.tsx","./src/components/exportsettings.tsx","./src/components/sizelisteditor.tsx","./src/components/svgeditor.tsx","./src/components/svgpreview.tsx","./src/components/svguploader.tsx","./src/services/api.ts","./src/stores/iconstore.ts","./vite.config.ts"],"version":"5.9.3"}
