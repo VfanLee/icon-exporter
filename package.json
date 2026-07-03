@@ -4,11 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm -r build",
-    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm build:shared && pnpm build:api && pnpm build:web",
+    "build:api": "pnpm --filter @icon-forge/api build",
+    "build:shared": "pnpm --filter @icon-forge/shared build",
+    "build:web": "pnpm --filter @icon-forge/web build",
+    "dev:api": "pnpm --filter @icon-forge/api dev",
+    "dev:shared": "pnpm --filter @icon-forge/shared dev",
+    "dev:web": "pnpm --filter @icon-forge/web dev",
     "format": "prettier --write .",
-    "lint": "pnpm -r lint",
-    "test": "pnpm -r test"
+    "lint": "pnpm -r lint"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
