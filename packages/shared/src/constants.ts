@@ -2,16 +2,14 @@ import type {
   ExportEffectsOptions,
   ExportFormat,
   ExportResizeOptions,
-  ExportSize,
   ExportTransformOptions,
   ExportTrimOptions,
   FitMode,
   ResizePosition,
 } from './export.types'
+import { DEFAULT_CUSTOM_OUTPUTS } from './export-presets'
 
-export const DEFAULT_SIZES: ExportSize[] = [{ width: 512, height: 512 }]
-
-export const EXPORT_FORMATS: ExportFormat[] = ['png', 'webp', 'jpeg', 'avif', 'svg']
+export const EXPORT_FORMATS: ExportFormat[] = ['png', 'webp', 'jpeg', 'avif', 'svg', 'ico', 'icns']
 export const FIT_MODES: FitMode[] = ['contain', 'cover', 'fill', 'inside', 'outside']
 export const RESIZE_POSITIONS: ResizePosition[] = [
   'center',
@@ -28,7 +26,7 @@ export const RESIZE_POSITIONS: ResizePosition[] = [
 export const SVG_MAX_BYTES = 1024 * 1024
 export const MAX_EXPORT_SIZE = 2048
 export const MAX_SIZE_COUNT = 20
-export const MAX_FORMAT_COUNT = 5
+export const MAX_FORMAT_COUNT = 7
 export const MAX_OUTPUT_FILE_COUNT = 40
 
 export const RASTER_DENSITY = 384
@@ -61,8 +59,7 @@ export const DEFAULT_TRIM_OPTIONS: ExportTrimOptions = {
 
 export const DEFAULT_EXPORT_OPTIONS = {
   filename: 'icon',
-  sizes: DEFAULT_SIZES,
-  formats: ['png'] satisfies ExportFormat[],
+  outputs: DEFAULT_CUSTOM_OUTPUTS,
   background: {
     transparent: true,
     color: '#ffffff',

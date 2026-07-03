@@ -1,20 +1,26 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common'
-import { MAX_OUTPUT_FILE_COUNT, type ExportFormat, type ValidateSvgResponse } from '@icon-forge/shared'
+import { MAX_OUTPUT_FILE_COUNT, countOutputFiles, type ExportFormat } from '@icon-forge/shared'
 import type { Response } from 'express'
 import { ExportIconDto, PreviewIconDto } from './dto/export-icon.dto'
+import { IcoBuilderService } from './services/ico-builder.service'
+import { IcnsBuilderService } from './services/icns-builder.service'
 import { ImageRendererService } from './services/image-renderer.service'
 import { SvgSanitizerService } from './services/svg-sanitizer.service'
 import { ZipBuilderService } from './services/zip-builder.service'
+
+type RasterExportFormat = Exclude<ExportFormat, 'svg' | 'ico' | 'icns'>
 
 @Injectable()
 export class IconService {
   constructor(
     private readonly sanitizer: SvgSanitizerService,
     private readonly renderer: ImageRendererService,
+    private readonly icoBuilder: IcoBuilderService,
+    private readonly icnsBuilder: IcnsBuilderService,
     private readonly zipBuilder: ZipBuilderService,
   ) {}
 
-  validateSvg(svg: string): ValidateSvgResponse {
+  validateSvg(svg: string) {
     return this.sanitizer.validateAndSanitize(svg)
   }
 
@@ -28,8 +34,7 @@ export class IconService {
   }
 
   async exportIcon(dto: ExportIconDto, response: Response) {
-    const rasterFormatCount = dto.formats.filter((format) => format !== 'svg').length
-    const outputFileCount = dto.sizes.length * rasterFormatCount + (dto.formats.includes('svg') ? 1 : 0)
+    const outputFileCount = countOutputFiles(dto.outputs)
 
     if (outputFileCount > MAX_OUTPUT_FILE_COUNT) {
       throw new BadRequestException(`输出文件过多，最多 ${MAX_OUTPUT_FILE_COUNT} 个。`)
@@ -43,26 +48,40 @@ export class IconService {
     const archive = this.zipBuilder.createArchive(response)
 
     try {
-      if (dto.formats.includes('svg')) {
-        this.zipBuilder.appendBuffer(
-          archive,
-          Buffer.from(validation.sanitizedSvg),
-          `${dto.filename}-export/${dto.filename}.svg`,
-        )
-      }
+      for (const output of dto.outputs) {
+        switch (output.format) {
+          case 'svg':
+            this.zipBuilder.appendBuffer(
+              archive,
+              Buffer.from(validation.sanitizedSvg),
+              `${dto.filename}-export/${dto.filename}.svg`,
+            )
+            break
 
-      for (const format of dto.formats) {
-        if (format === 'svg') {
-          continue
-        }
+          case 'ico': {
+            const embedSizes = output.sizes.map((size) => size.width)
+            const icoBuffer = await this.icoBuilder.build(validation.sanitizedSvg, dto, embedSizes)
+            this.zipBuilder.appendBuffer(archive, icoBuffer, `${dto.filename}-export/${dto.filename}.ico`)
+            break
+          }
 
-        for (const size of dto.sizes) {
-          const buffer = await this.renderer.render(validation.sanitizedSvg, size, format, dto)
-          this.zipBuilder.appendBuffer(
-            archive,
-            buffer,
-            `${dto.filename}-export/${this.buildFileName(dto.filename, size.width, size.height, format)}`,
-          )
+          case 'icns': {
+            const icnsBuffer = await this.icnsBuilder.build(validation.sanitizedSvg, dto, output.sizes)
+            this.zipBuilder.appendBuffer(archive, icnsBuffer, `${dto.filename}-export/${dto.filename}.icns`)
+            break
+          }
+
+          default: {
+            const rasterFormat = output.format as RasterExportFormat
+            for (const size of output.sizes) {
+              const buffer = await this.renderer.render(validation.sanitizedSvg, size, rasterFormat, dto)
+              this.zipBuilder.appendBuffer(
+                archive,
+                buffer,
+                `${dto.filename}-export/${this.buildFileName(dto.filename, size.width, size.height, rasterFormat)}`,
+              )
+            }
+          }
         }
       }
 
@@ -73,7 +92,7 @@ export class IconService {
     }
   }
 
-  private buildFileName(filename: string, width: number, height: number, format: Exclude<ExportFormat, 'svg'>) {
+  private buildFileName(filename: string, width: number, height: number, format: RasterExportFormat) {
     return `${filename}-${width}x${height}.${format === 'jpeg' ? 'jpg' : format}`
   }
 }

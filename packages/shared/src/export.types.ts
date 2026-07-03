@@ -1,4 +1,4 @@
-export type ExportFormat = 'png' | 'webp' | 'jpeg' | 'avif' | 'svg'
+export type ExportFormat = 'png' | 'webp' | 'jpeg' | 'avif' | 'svg' | 'ico' | 'icns'
 export type FitMode = 'contain' | 'cover' | 'fill' | 'inside' | 'outside'
 export type ResizePosition =
   'center' | 'top' | 'right top' | 'right' | 'right bottom' | 'bottom' | 'left bottom' | 'left' | 'left top'
@@ -56,24 +56,32 @@ export interface ExportTrimOptions {
   threshold: number
 }
 
-export interface ExportIconRequest {
-  svg: string
-  filename: string
+export interface ExportOutputSpec {
+  format: ExportFormat
   sizes: ExportSize[]
-  formats: ExportFormat[]
+}
+
+export interface ExportRenderRequest {
+  svg: string
   background: ExportBackground
   padding: number
   borderRadius: number
   fit: FitMode
-  quality: ExportQuality
   resize?: ExportResizeOptions
   transform?: ExportTransformOptions
   effects?: ExportEffectsOptions
   trim?: ExportTrimOptions
 }
 
-export interface PreviewIconRequest extends ExportIconRequest {
+export interface ExportIconRequest extends ExportRenderRequest {
+  filename: string
+  outputs: ExportOutputSpec[]
+  quality: ExportQuality
+}
+
+export interface PreviewIconRequest extends ExportRenderRequest {
   previewSize: ExportSize
+  quality: ExportQuality
 }
 
 export interface ValidateSvgRequest {

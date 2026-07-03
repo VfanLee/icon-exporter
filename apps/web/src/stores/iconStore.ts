@@ -1,18 +1,31 @@
 import { create } from 'zustand'
+import { useShallow } from 'zustand/react/shallow'
 import {
+  DEFAULT_CUSTOM_OUTPUTS,
   DEFAULT_EFFECTS_OPTIONS,
   DEFAULT_EXPORT_OPTIONS,
   DEFAULT_RESIZE_OPTIONS,
-  DEFAULT_SIZES,
   DEFAULT_TRANSFORM_OPTIONS,
   DEFAULT_TRIM_OPTIONS,
+  EXPORT_PRESETS,
+  cloneOutputs,
+  createOutputsFromFormats,
+  defaultOutputSpec,
+  isBuiltinPresetId,
   type ExportFormat,
   type ExportIconRequest,
+  type ExportOutputSpec,
+  type ExportPresetId,
   type FitMode,
   type PreviewIconRequest,
   type ExportSize,
   type ValidateSvgResponse,
 } from '@icon-forge/shared'
+import {
+  loadUserExportPresets,
+  persistUserExportPresets,
+  type UserExportPreset,
+} from '../utils/exportPresetStorage'
 
 const SAMPLE_SVG = `<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
   <circle cx="64" cy="64" r="48" fill="#8c8c8c"/>
@@ -22,12 +35,17 @@ const SAMPLE_SVG = `<svg width="128" height="128" viewBox="0 0 128 128" xmlns="h
 </svg>`
 
 const PREVIEW_SIZE: ExportSize = { width: 512, height: 512 }
+const DEFAULT_BUILTIN_PRESET: ExportPresetId = 'preset1'
+
+function getBuiltinPreset(presetId: Exclude<ExportPresetId, 'custom'>) {
+  return EXPORT_PRESETS[presetId]
+}
 
 interface IconState {
   svg: string
-  filename: string
-  sizes: ExportSize[]
-  formats: ExportFormat[]
+  activePresetId: string
+  userPresets: UserExportPreset[]
+  outputs: ExportOutputSpec[]
   transparent: boolean
   backgroundColor: string
   padding: number
@@ -38,8 +56,6 @@ interface IconState {
   avifQuality: number
   resizePosition: (typeof DEFAULT_RESIZE_OPTIONS)['position']
   rotate: number
-  flip: boolean
-  flop: boolean
   sharpenEnabled: boolean
   sharpenSigma: number
   blur: number
@@ -55,9 +71,14 @@ interface IconState {
   trimThreshold: number
   validation?: ValidateSvgResponse
   setSvg: (svg: string) => void
-  setFilename: (filename: string) => void
-  setSizes: (sizes: ExportSize[]) => void
+  applyExportPreset: (presetId: string) => void
+  saveCurrentAsPreset: (label: string) => void
   setFormats: (formats: ExportFormat[]) => void
+  setOutputSizes: (format: ExportFormat, sizes: ExportSize[]) => void
+  toggleOutputSize: (format: ExportFormat, size: number) => void
+  addCustomOutputSize: (format: ExportFormat, size: number) => void
+  addOutputFormat: (format: ExportFormat) => void
+  removeOutputFormat: (format: ExportFormat) => void
   setTransparent: (transparent: boolean) => void
   setBackgroundColor: (color: string) => void
   setPadding: (padding: number) => void
@@ -68,8 +89,6 @@ interface IconState {
   setAvifQuality: (quality: number) => void
   setResizePosition: (position: IconState['resizePosition']) => void
   setRotate: (rotate: number) => void
-  setFlip: (flip: boolean) => void
-  setFlop: (flop: boolean) => void
   setSharpenEnabled: (enabled: boolean) => void
   setSharpenSigma: (sigma: number) => void
   setBlur: (blur: number) => void
@@ -108,8 +127,8 @@ function buildRenderOptions(
     },
     transform: {
       rotate: state.rotate,
-      flip: state.flip,
-      flop: state.flop,
+      flip: false,
+      flop: false,
     },
     effects: {
       sharpen: { enabled: state.sharpenEnabled, sigma: state.sharpenSigma },
@@ -132,11 +151,27 @@ function buildRenderOptions(
   }
 }
 
+function syncOutputsWithFormats(currentOutputs: ExportOutputSpec[], formats: ExportFormat[]): ExportOutputSpec[] {
+  return formats.map((format) => {
+    const existing = currentOutputs.find((output) => output.format === format)
+    if (existing) {
+      return {
+        format: existing.format,
+        sizes: existing.sizes.map((size) => ({ ...size })),
+      }
+    }
+
+    return createOutputsFromFormats([format])[0]
+  })
+}
+
+const initialBuiltinPreset = getBuiltinPreset(DEFAULT_BUILTIN_PRESET)
+
 export const useIconStore = create<IconState>((set, get) => ({
   svg: SAMPLE_SVG,
-  filename: DEFAULT_EXPORT_OPTIONS.filename,
-  sizes: DEFAULT_SIZES,
-  formats: ['png'],
+  activePresetId: DEFAULT_BUILTIN_PRESET,
+  userPresets: loadUserExportPresets(),
+  outputs: cloneOutputs(initialBuiltinPreset.outputs),
   transparent: DEFAULT_EXPORT_OPTIONS.background.transparent,
   backgroundColor: DEFAULT_EXPORT_OPTIONS.background.color,
   padding: DEFAULT_EXPORT_OPTIONS.padding,
@@ -147,8 +182,6 @@ export const useIconStore = create<IconState>((set, get) => ({
   avifQuality: DEFAULT_EXPORT_OPTIONS.quality.avif,
   resizePosition: DEFAULT_RESIZE_OPTIONS.position,
   rotate: DEFAULT_TRANSFORM_OPTIONS.rotate,
-  flip: DEFAULT_TRANSFORM_OPTIONS.flip,
-  flop: DEFAULT_TRANSFORM_OPTIONS.flop,
   sharpenEnabled: DEFAULT_EFFECTS_OPTIONS.sharpen.enabled,
   sharpenSigma: DEFAULT_EFFECTS_OPTIONS.sharpen.sigma,
   blur: DEFAULT_EFFECTS_OPTIONS.blur,
@@ -163,9 +196,136 @@ export const useIconStore = create<IconState>((set, get) => ({
   trimEnabled: DEFAULT_TRIM_OPTIONS.enabled,
   trimThreshold: DEFAULT_TRIM_OPTIONS.threshold,
   setSvg: (svg) => set({ svg }),
-  setFilename: (filename) => set({ filename }),
-  setSizes: (sizes) => set({ sizes }),
-  setFormats: (formats) => set({ formats }),
+  applyExportPreset: (presetId) => {
+    if (presetId === 'custom') {
+      set({ activePresetId: 'custom' })
+      return
+    }
+
+    if (isBuiltinPresetId(presetId)) {
+      const preset = getBuiltinPreset(presetId)
+      set({
+        activePresetId: presetId,
+        outputs: cloneOutputs(preset.outputs),
+      })
+      return
+    }
+
+    const userPreset = get().userPresets.find((preset) => preset.id === presetId)
+    if (!userPreset) {
+      return
+    }
+
+    set({
+      activePresetId: presetId,
+      outputs: cloneOutputs(userPreset.outputs),
+    })
+  },
+  saveCurrentAsPreset: (label) => {
+    const trimmed = label.trim()
+    if (!trimmed) {
+      throw new Error('预设名称不能为空')
+    }
+
+    const state = get()
+    if (state.userPresets.some((preset) => preset.label === trimmed)) {
+      throw new Error('已存在同名预设')
+    }
+
+    const preset: UserExportPreset = {
+      id: crypto.randomUUID(),
+      label: trimmed,
+      outputs: cloneOutputs(state.outputs),
+    }
+    const userPresets = [...state.userPresets, preset]
+    persistUserExportPresets(userPresets)
+    set({ userPresets, activePresetId: preset.id })
+  },
+  setFormats: (formats) =>
+    set((state) => {
+      if (formats.length === 0) {
+        return state
+      }
+
+      return {
+        activePresetId: 'custom',
+        outputs: syncOutputsWithFormats(state.outputs, formats),
+      }
+    }),
+  setOutputSizes: (format, sizes) =>
+    set((state) => ({
+      activePresetId: 'custom',
+      outputs: state.outputs.map((output) =>
+        output.format === format ? { ...output, sizes: sizes.map((size) => ({ ...size })) } : output,
+      ),
+    })),
+  toggleOutputSize: (format, size) =>
+    set((state) => ({
+      activePresetId: 'custom',
+      outputs: state.outputs.map((output) => {
+        if (output.format !== format) {
+          return output
+        }
+
+        const exists = output.sizes.some((item) => item.width === size && item.height === size)
+        if (exists) {
+          if (output.sizes.length <= 1) {
+            return output
+          }
+
+          return {
+            ...output,
+            sizes: output.sizes.filter((item) => !(item.width === size && item.height === size)),
+          }
+        }
+
+        return {
+          ...output,
+          sizes: [...output.sizes, { width: size, height: size }].sort((a, b) => b.width - a.width),
+        }
+      }),
+    })),
+  addCustomOutputSize: (format, size) =>
+    set((state) => ({
+      activePresetId: 'custom',
+      outputs: state.outputs.map((output) => {
+        if (output.format !== format) {
+          return output
+        }
+
+        const exists = output.sizes.some((item) => item.width === size && item.height === size)
+        if (exists) {
+          return output
+        }
+
+        return {
+          ...output,
+          sizes: [...output.sizes, { width: size, height: size }].sort((a, b) => b.width - a.width),
+        }
+      }),
+    })),
+  addOutputFormat: (format) =>
+    set((state) => {
+      if (state.outputs.some((output) => output.format === format)) {
+        return state
+      }
+
+      return {
+        activePresetId: 'custom',
+        outputs: [...state.outputs, defaultOutputSpec(format)],
+      }
+    }),
+  removeOutputFormat: (format) =>
+    set((state) => {
+      if (state.outputs.length <= 1) {
+        return state
+      }
+
+      return {
+        activePresetId: 'custom',
+        outputs: state.outputs.filter((output) => output.format !== format),
+      }
+    }),
   setTransparent: (transparent) => set({ transparent }),
   setBackgroundColor: (backgroundColor) => set({ backgroundColor }),
   setPadding: (padding) => set({ padding }),
@@ -176,8 +336,6 @@ export const useIconStore = create<IconState>((set, get) => ({
   setAvifQuality: (avifQuality) => set({ avifQuality }),
   setResizePosition: (resizePosition) => set({ resizePosition }),
   setRotate: (rotate) => set({ rotate }),
-  setFlip: (flip) => set({ flip }),
-  setFlop: (flop) => set({ flop }),
   setSharpenEnabled: (sharpenEnabled) => set({ sharpenEnabled }),
   setSharpenSigma: (sharpenSigma) => set({ sharpenSigma }),
   setBlur: (blur) => set({ blur }),
@@ -197,9 +355,8 @@ export const useIconStore = create<IconState>((set, get) => ({
 
     return {
       ...buildRenderOptions(state),
-      filename: state.filename || DEFAULT_EXPORT_OPTIONS.filename,
-      sizes: state.sizes,
-      formats: state.formats,
+      filename: DEFAULT_EXPORT_OPTIONS.filename,
+      outputs: cloneOutputs(state.outputs),
       quality: {
         webp: state.webpQuality,
         jpeg: state.jpegQuality,
@@ -212,11 +369,18 @@ export const useIconStore = create<IconState>((set, get) => ({
 
     return {
       ...buildRenderOptions(state),
-      filename: DEFAULT_EXPORT_OPTIONS.filename,
-      sizes: [PREVIEW_SIZE],
-      formats: ['png'],
-      quality: DEFAULT_EXPORT_OPTIONS.quality,
+      quality: {
+        webp: state.webpQuality,
+        jpeg: state.jpegQuality,
+        avif: state.avifQuality,
+      },
       previewSize: PREVIEW_SIZE,
     }
   },
 }))
+
+export function useExportFormats() {
+  return useIconStore(useShallow((state) => state.outputs.map((output) => output.format)))
+}
+
+export { DEFAULT_CUSTOM_OUTPUTS }

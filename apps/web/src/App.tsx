@@ -1,4 +1,4 @@
-import { Card, Flex, Layout, Typography } from 'antd'
+import { Card, Flex, Layout, Spin, Typography } from 'antd'
 import { lazy, Suspense } from 'react'
 
 const SettingsPanel = lazy(() =>
@@ -18,7 +18,7 @@ const { Title, Text } = Typography
 function PanelFallback() {
   return (
     <Flex align="center" justify="center" className="panel-fallback">
-      <Text type="secondary">加载中...</Text>
+      <Spin />
     </Flex>
   )
 }
@@ -46,7 +46,7 @@ export default function App() {
           </div>
 
           <aside className="settings-column">
-            <Card size="small" variant="borderless" className="settings-card">
+            <Card variant="borderless" className="settings-card">
               <Suspense fallback={<PanelFallback />}>
                 <SettingsPanel />
               </Suspense>

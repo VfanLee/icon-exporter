@@ -5,7 +5,6 @@ import { useIconStore } from '../stores/iconStore'
 
 export function SvgUploader() {
   const setSvg = useIconStore((state) => state.setSvg)
-  const setFilename = useIconStore((state) => state.setFilename)
 
   const props: UploadProps = {
     accept: '.svg,image/svg+xml',
@@ -14,7 +13,6 @@ export function SvgUploader() {
     beforeUpload: async (file) => {
       const text = await file.text()
       setSvg(text)
-      setFilename(file.name.replace(/\.svg$/i, '') || 'icon')
       message.success('SVG 已加载')
       return false
     },

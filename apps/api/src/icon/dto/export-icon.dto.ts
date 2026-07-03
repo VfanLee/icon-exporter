@@ -38,6 +38,18 @@ export class ExportSizeDto {
   height!: number
 }
 
+export class ExportOutputSpecDto {
+  @IsIn(EXPORT_FORMATS)
+  format!: ExportFormat
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(MAX_SIZE_COUNT)
+  @ValidateNested({ each: true })
+  @Type(() => ExportSizeDto)
+  sizes!: ExportSizeDto[]
+}
+
 export class ExportBackgroundDto {
   @IsBoolean()
   transparent!: boolean
@@ -172,26 +184,9 @@ export class ExportTrimOptionsDto {
   threshold?: number
 }
 
-export class ExportIconDto {
+export class ExportRenderOptionsDto {
   @IsString()
   svg!: string
-
-  @IsString()
-  @Matches(/^[a-zA-Z0-9._-]+$/)
-  filename!: string
-
-  @IsArray()
-  @ArrayMinSize(1)
-  @ArrayMaxSize(MAX_SIZE_COUNT)
-  @ValidateNested({ each: true })
-  @Type(() => ExportSizeDto)
-  sizes!: ExportSizeDto[]
-
-  @IsArray()
-  @ArrayMinSize(1)
-  @ArrayMaxSize(MAX_FORMAT_COUNT)
-  @IsIn(EXPORT_FORMATS, { each: true })
-  formats!: ExportFormat[]
 
   @IsObject()
   @ValidateNested()
@@ -241,7 +236,20 @@ export class ExportIconDto {
   trim?: ExportTrimOptionsDto
 }
 
-export class PreviewIconDto extends ExportIconDto {
+export class ExportIconDto extends ExportRenderOptionsDto {
+  @IsString()
+  @Matches(/^[a-zA-Z0-9._-]+$/)
+  filename!: string
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(MAX_FORMAT_COUNT)
+  @ValidateNested({ each: true })
+  @Type(() => ExportOutputSpecDto)
+  outputs!: ExportOutputSpecDto[]
+}
+
+export class PreviewIconDto extends ExportRenderOptionsDto {
   @IsObject()
   @ValidateNested()
   @Type(() => ExportSizeDto)

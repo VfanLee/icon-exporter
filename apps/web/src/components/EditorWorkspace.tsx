@@ -1,5 +1,5 @@
 import { CodeOutlined, EyeOutlined } from '@ant-design/icons'
-import { Card, Space, Tabs } from 'antd'
+import { Card, Flex, Space, Spin, Tabs } from 'antd'
 import { lazy, Suspense, useState } from 'react'
 import { ValidateSvgButton } from './ExportButton'
 import { SvgEditor } from './SvgEditor'
@@ -16,14 +16,18 @@ const SvgUploader = lazy(() =>
 )
 
 function TabFallback() {
-  return <div className="panel-fallback">加载中...</div>
+  return (
+    <Flex align="center" justify="center" className="panel-fallback">
+      <Spin />
+    </Flex>
+  )
 }
 
 export function EditorWorkspace() {
   const [activeKey, setActiveKey] = useState('preview')
 
   return (
-    <Card size="small" variant="borderless" className="workspace-card">
+    <Card variant="borderless" className="workspace-card">
       <Tabs
         className="workspace-tabs"
         activeKey={activeKey}
@@ -40,24 +44,18 @@ export function EditorWorkspace() {
         items={[
           {
             key: 'source',
-            label: (
-              <span className="workspace-tab-label">
-                <CodeOutlined />
-                源码
-              </span>
-            ),
+            label: '源码',
+            icon: <CodeOutlined />,
             children: (
-              <div className="workspace-pane workspace-source">{activeKey === 'source' ? <SvgEditor /> : null}</div>
+              <div className="workspace-pane workspace-source">
+                <SvgEditor />
+              </div>
             ),
           },
           {
             key: 'preview',
-            label: (
-              <span className="workspace-tab-label">
-                <EyeOutlined />
-                预览
-              </span>
-            ),
+            label: '预览',
+            icon: <EyeOutlined />,
             children: (
               <div className="workspace-pane workspace-preview">
                 <Suspense fallback={<TabFallback />}>

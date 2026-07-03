@@ -89,34 +89,16 @@ body {
   width: 100%;
 }
 
-.settings-divider {
-  margin: 4px 0 12px;
-}
-
-.settings-section-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-}
-
-.settings-section-heading {
+.settings-form {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  overflow: hidden;
 }
 
-.settings-section-scope {
-  font-size: 12px;
-  font-weight: 400;
-  padding-left: 22px;
-  line-height: 1.4;
-}
-
-.settings-panel-desc {
-  margin: 0 0 12px !important;
-  font-size: 12px;
-  line-height: 1.5;
+.settings-divider {
+  margin: 4px 0 12px;
 }
 
 .settings-panel-alert {
@@ -130,42 +112,64 @@ body {
   color: rgba(0, 0, 0, 0.88);
 }
 
-.settings-tab-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
 .settings-tabs {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   .ant-tabs-nav {
     flex-shrink: 0;
     margin-bottom: 0;
   }
 
-  .ant-tabs-content-holder {
+  .ant-tabs-body-holder {
     flex: 1;
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
-  .ant-tabs-tabpane {
+  .ant-tabs-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ant-tabs-content {
     padding-top: 12px;
+    min-height: 0;
+
+    &.ant-tabs-content-active {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
   }
 }
 
 .settings-tab-pane {
-  padding-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  padding-bottom: 0;
 }
 
-.settings-action {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+.settings-tab-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.settings-tab-pane-export {
+  gap: 0;
 }
 
 .settings-collapse {
@@ -213,7 +217,14 @@ body {
     margin-bottom: 12px;
   }
 
-  .ant-tabs-content-holder {
+  .ant-tabs-body-holder {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ant-tabs-body {
     flex: 1;
     min-height: 0;
     display: flex;
@@ -221,27 +232,15 @@ body {
   }
 
   .ant-tabs-content {
-    flex: 1;
     min-height: 0;
-    height: 100%;
-  }
 
-  .ant-tabs-tabpane {
-    height: 100%;
+    &.ant-tabs-content-active {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
   }
-
-  .ant-tabs-tabpane-active {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-  }
-}
-
-.workspace-tab-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .workspace-pane {
@@ -252,26 +251,31 @@ body {
   flex-direction: column;
 }
 
-.workspace-source {
+.workspace-source,
+.workspace-preview {
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
 .workspace-editor {
   flex: 1;
   min-height: 0;
-  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   > div {
     flex: 1;
     min-height: 0;
-    height: 100% !important;
+    display: flex;
+    flex-direction: column;
   }
 
   .cm-editor {
-    height: 100% !important;
+    flex: 1;
+    min-height: 0;
     border: 1px solid #30363d;
     border-radius: 8px;
     overflow: hidden;
@@ -279,6 +283,8 @@ body {
   }
 
   .cm-scroller {
+    min-height: 0;
+    overflow: auto;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
     line-height: 1.6;
   }
@@ -289,21 +295,11 @@ body {
 }
 
 .preview-layout {
-  height: 100%;
+  flex: 1;
   min-height: 0;
-}
-
-.preview-meta {
-  flex-shrink: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.preview-toolbar {
-  flex-shrink: 0;
-  margin-bottom: 12px;
 }
 
 .preview-stage {
@@ -344,28 +340,33 @@ body {
 
 .export-preview-canvas {
   position: relative;
-  width: min(100%, 480px);
-  height: min(100%, 480px);
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
 
   img {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: min(100%, 512px);
+    max-height: min(100%, 512px);
     object-fit: contain;
     display: block;
   }
 }
 
-.preview-loading-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.72);
-  border-radius: 8px;
+.preview-spin {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+
+  .ant-spin-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .panel-fallback {
@@ -411,5 +412,20 @@ body {
     .ant-card-body {
       overflow: visible;
     }
+  }
+
+  .settings-form,
+  .settings-tabs,
+  .settings-tabs .ant-tabs-body-holder,
+  .settings-tabs .ant-tabs-body,
+  .settings-tabs .ant-tabs-content,
+  .settings-tabs .ant-tabs-content-active,
+  .settings-tab-pane {
+    height: auto;
+    overflow: visible;
+  }
+
+  .settings-tab-scroll {
+    overflow: visible;
   }
 }

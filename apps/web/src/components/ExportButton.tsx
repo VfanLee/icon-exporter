@@ -1,4 +1,5 @@
 import { DownloadOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
+import { DEFAULT_EXPORT_OPTIONS } from '@icon-forge/shared'
 import { Button, message } from 'antd'
 import { useState } from 'react'
 import { exportIcon, validateSvg } from '../services/api'
@@ -35,7 +36,6 @@ export function ValidateSvgButton() {
 
 export function ExportZipButton({ block = false }: { block?: boolean }) {
   const [exporting, setExporting] = useState(false)
-  const filename = useIconStore((state) => state.filename)
   const buildExportRequest = useIconStore((state) => state.buildExportRequest)
 
   const handleExport = async () => {
@@ -45,7 +45,7 @@ export function ExportZipButton({ block = false }: { block?: boolean }) {
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `${filename || 'icon'}-export.zip`
+      link.download = `${DEFAULT_EXPORT_OPTIONS.filename}-export.zip`
       link.click()
       URL.revokeObjectURL(url)
       message.success('ZIP 已下载')

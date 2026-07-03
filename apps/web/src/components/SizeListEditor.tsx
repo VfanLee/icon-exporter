@@ -3,18 +3,20 @@ import type { ColumnsType } from 'antd/es/table'
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
 import type { ExportSize } from '@icon-forge/shared'
 import { MAX_EXPORT_SIZE } from '@icon-forge/shared'
-import { useIconStore } from '../stores/iconStore'
 
-export function SizeListEditor() {
-  const sizes = useIconStore((state) => state.sizes)
-  const setSizes = useIconStore((state) => state.setSizes)
+interface SizeListEditorProps {
+  sizes: ExportSize[]
+  onChange: (sizes: ExportSize[]) => void
+  minCount?: number
+}
 
+export function SizeListEditor({ sizes, onChange, minCount = 1 }: SizeListEditorProps) {
   const updateSize = (index: number, patch: Partial<ExportSize>) => {
-    setSizes(sizes.map((size, sizeIndex) => (sizeIndex === index ? { ...size, ...patch } : size)))
+    onChange(sizes.map((size, sizeIndex) => (sizeIndex === index ? { ...size, ...patch } : size)))
   }
 
   const removeSize = (index: number) => {
-    setSizes(sizes.filter((_, sizeIndex) => sizeIndex !== index))
+    onChange(sizes.filter((_, sizeIndex) => sizeIndex !== index))
   }
 
   const columns: ColumnsType<ExportSize & { key: number }> = [
@@ -50,7 +52,7 @@ export function SizeListEditor() {
           type="text"
           danger
           icon={<DeleteOutlined />}
-          disabled={sizes.length <= 1}
+          disabled={sizes.length <= minCount}
           onClick={() => removeSize(index)}
           aria-label="删除尺寸"
         />
@@ -61,7 +63,6 @@ export function SizeListEditor() {
   return (
     <Space direction="vertical" className="full-width">
       <Table
-        size="small"
         bordered
         pagination={false}
         scroll={{ x: true }}
@@ -72,9 +73,9 @@ export function SizeListEditor() {
         block
         type="dashed"
         icon={<PlusOutlined />}
-        onClick={() => setSizes([...sizes, { width: 1024, height: 1024 }])}
+        onClick={() => onChange([...sizes, { width: 1024, height: 1024 }])}
       >
-        添加导出尺寸
+        添加尺寸
       </Button>
     </Space>
   )

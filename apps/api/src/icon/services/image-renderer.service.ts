@@ -9,21 +9,23 @@ import {
   type ExportFormat,
   type ExportSize,
 } from '@icon-forge/shared'
-import type { ExportIconDto } from '../dto/export-icon.dto'
+import type { ExportRenderOptionsDto, PreviewIconDto } from '../dto/export-icon.dto'
+
+type RenderOptions = ExportRenderOptionsDto | PreviewIconDto
 
 @Injectable()
 export class ImageRendererService {
-  async render(svg: string, size: ExportSize, format: Exclude<ExportFormat, 'svg'>, options: ExportIconDto) {
+  async render(svg: string, size: ExportSize, format: Exclude<ExportFormat, 'svg' | 'ico' | 'icns'>, options: RenderOptions) {
     const image = await this.buildPipeline(svg, size, options)
     return this.encode(image, format, options)
   }
 
-  async renderPreview(svg: string, size: ExportSize, options: ExportIconDto) {
+  async renderPreview(svg: string, size: ExportSize, options: RenderOptions) {
     const image = await this.buildPipeline(svg, size, options)
     return image.png().toBuffer()
   }
 
-  private async buildPipeline(svg: string, size: ExportSize, options: ExportIconDto): Promise<Sharp> {
+  private async buildPipeline(svg: string, size: ExportSize, options: RenderOptions): Promise<Sharp> {
     const resizeOpts = { ...DEFAULT_RESIZE_OPTIONS, ...options.resize }
     const transform = { ...DEFAULT_TRANSFORM_OPTIONS, ...options.transform }
     const effects = this.mergeEffects(options)
@@ -51,11 +53,19 @@ export class ImageRendererService {
     if (transform.rotate !== 0) {
       icon = await this.applyCenterRotation(icon, transform.rotate, innerWidth, innerHeight)
     }
-    if (transform.flip) {
-      icon = icon.flip()
-    }
-    if (transform.flop) {
-      icon = icon.flop()
+
+    if (transform.flip || transform.flop) {
+      // Composite-based Sharp pipelines ignore flip/flop after center rotation.
+      if (transform.rotate !== 0) {
+        icon = sharp(await icon.png().toBuffer())
+      }
+
+      if (transform.flip) {
+        icon = icon.flip()
+      }
+      if (transform.flop) {
+        icon = icon.flop()
+      }
     }
 
     if (effects.sharpen.enabled) {
@@ -172,8 +182,8 @@ export class ImageRendererService {
 
   private async encode(
     image: Sharp,
-    format: Exclude<ExportFormat, 'svg'>,
-    options: ExportIconDto,
+    format: Exclude<ExportFormat, 'svg' | 'ico' | 'icns'>,
+    options: RenderOptions,
   ): Promise<Buffer> {
     switch (format) {
       case 'png':
@@ -194,7 +204,7 @@ export class ImageRendererService {
     }
   }
 
-  private mergeEffects(options: ExportIconDto) {
+  private mergeEffects(options: RenderOptions) {
     const defaults = DEFAULT_EFFECTS_OPTIONS
     const effects = options.effects
 
@@ -210,7 +220,7 @@ export class ImageRendererService {
     }
   }
 
-  private getBackground(format: Exclude<ExportFormat, 'svg'>, options: ExportIconDto): Color {
+  private getBackground(format: Exclude<ExportFormat, 'svg'>, options: RenderOptions): Color {
     if (format !== 'jpeg' && format !== 'avif' && options.background.transparent) {
       return this.transparentBackground()
     }

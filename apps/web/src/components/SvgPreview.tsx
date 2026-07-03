@@ -83,21 +83,21 @@ export function SvgPreview() {
 
   return (
     <Flex vertical className="preview-layout full-width">
-      <div className="preview-meta">
+      <Flex vertical gap={8} style={{ flexShrink: 0, marginBottom: 12 }}>
         {validation && !validation.valid ? (
-          <Alert type="error" showIcon message={validation.warnings.join('；')} />
+          <Alert type="error" showIcon title={validation.warnings.join('；')} />
         ) : null}
         {validation?.valid ? (
           <Alert
             type="success"
             showIcon
-            message={`SVG 有效${validation.viewBox ? ` · viewBox ${validation.viewBox}` : ''}`}
+            title={`SVG 有效${validation.viewBox ? ` · viewBox ${validation.viewBox}` : ''}`}
           />
         ) : null}
-        {error ? <Alert type="error" showIcon message={error} /> : null}
-      </div>
+        {error ? <Alert type="error" showIcon title={error} /> : null}
+      </Flex>
 
-      <Flex justify="space-between" align="center" wrap="wrap" gap={12} className="preview-toolbar">
+      <Flex justify="space-between" align="center" wrap="wrap" gap={12} style={{ flexShrink: 0, marginBottom: 12 }}>
         <Segmented
           value={background}
           options={BACKGROUND_OPTIONS}
@@ -109,17 +109,11 @@ export function SvgPreview() {
       </Flex>
 
       <div className={stageClass}>
-        {loading && !previewUrl ? <Spin size="large" /> : null}
-        {previewUrl ? (
+        <Spin spinning={loading} size="large" className="preview-spin">
           <div className="export-preview-canvas">
-            <img src={previewUrl} alt="Sharp 预览" />
-            {loading ? (
-              <div className="preview-loading-overlay">
-                <Spin />
-              </div>
-            ) : null}
+            {previewUrl ? <img src={previewUrl} alt="Sharp 预览" /> : null}
           </div>
-        ) : null}
+        </Spin>
       </div>
     </Flex>
   )
