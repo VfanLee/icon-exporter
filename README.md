@@ -37,18 +37,15 @@ pnpm install
 
 ## 开发
 
-一条命令启动 shared watch、API 与前端（Turborepo 会先构建 shared，再并行启动各 dev 服务）：
-
 ```bash
 pnpm dev
 ```
 
-| 服务    | 默认地址                       | 说明                                            |
-| ------- | ------------------------------ | ----------------------------------------------- |
-| Web     | http://localhost:5173          | 浏览器访问入口；5173 被占用时 Vite 会自动换端口 |
-| API     | http://localhost:3000          | 后端接口                                        |
-| Swagger | http://localhost:3000/api-docs | API 文档                                        |
-| Health  | http://localhost:3000/health   | 健康检查                                        |
+| 服务    | 地址                           |
+| ------- | ------------------------------ |
+| Web     | http://localhost:5173          |
+| API     | http://localhost:3000          |
+| Swagger | http://localhost:3000/api-docs |
 
 单独启动某个包：
 
@@ -85,5 +82,5 @@ pnpm format  # Prettier 格式化全仓库
 ## 基本使用流程
 
 1. **上传 SVG** — 点击「源码」里的「上传 SVG」，或在编辑器里粘贴代码
-2. **预览调整** — 在「预览」里查看效果；右侧「容器」「图形」调整合成效果（预览与导出一致）；「导出」配置文件名、格式与尺寸
+2. **预览调整** — 在「预览」里查看效果；右侧调整容器、图形与导出设置
 3. **导出** — 在右侧「导出」Tab 底部点击「导出 ZIP」下载成品

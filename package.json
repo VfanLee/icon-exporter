@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "postinstall": "pnpm --filter @icon-forge/shared build",
     "format": "prettier --write .",
     "lint": "turbo run lint"
   },

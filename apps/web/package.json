@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",
-    "dev": "vite --host 0.0.0.0",
+    "dev": "wait-on http://localhost:3000/health -t 120000 && vite --host 0.0.0.0",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "echo \"No tests for web\""
@@ -29,6 +29,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "less": "^4.6.7",
     "typescript": "^5.9.3",
+    "wait-on": "^8.0.3",
     "vite": "^7.3.1"
   }
 }

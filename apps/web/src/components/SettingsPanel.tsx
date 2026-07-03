@@ -105,7 +105,7 @@ function ExportSettings() {
       </div>
       <Flex vertical gap={8} style={{ flexShrink: 0, marginTop: 12 }}>
         <Divider style={{ margin: 0 }} />
-        <Space direction="vertical" size={8} style={{ width: '100%' }}>
+        <Space orientation="vertical" size={8} style={{ width: '100%' }}>
           <ExportZipButton block />
           <SavePresetButton block />
         </Space>

@@ -61,7 +61,7 @@ export function SizeListEditor({ sizes, onChange, minCount = 1 }: SizeListEditor
   ]
 
   return (
-    <Space direction="vertical" className="full-width">
+    <Space orientation="vertical" className="full-width">
       <Table
         bordered
         pagination={false}
