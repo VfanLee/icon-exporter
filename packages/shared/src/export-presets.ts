@@ -27,11 +27,11 @@ export const EXPORT_PRESETS: Record<Exclude<ExportPresetId, 'custom'>, ExportPre
   preset1: {
     id: 'preset1',
     label: '预设1',
-    description: 'ICO 16–256 · ICNS 16–1024 · PNG 1024',
+    description: 'ICO 16–256 · ICNS 16–1024 · PNG 512',
     outputs: [
       { format: 'ico', sizes: squareSizes([16, 32, 48, 64, 128, 256]) },
       { format: 'icns', sizes: squareSizes([16, 32, 64, 128, 256, 512, 1024]) },
-      { format: 'png', sizes: [squareSize(1024)] },
+      { format: 'png', sizes: [squareSize(512)] },
     ],
   },
   preset2: {

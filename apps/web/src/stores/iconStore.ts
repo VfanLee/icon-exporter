@@ -26,6 +26,7 @@ import {
   persistUserExportPresets,
   type UserExportPreset,
 } from '../utils/exportPresetStorage'
+import { loadCachedSvg, persistCachedSvg } from '../utils/svgSessionStorage'
 
 const SAMPLE_SVG = `<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
   <circle cx="64" cy="64" r="48" fill="#8c8c8c"/>
@@ -166,9 +167,10 @@ function syncOutputsWithFormats(currentOutputs: ExportOutputSpec[], formats: Exp
 }
 
 const initialBuiltinPreset = getBuiltinPreset(DEFAULT_BUILTIN_PRESET)
+const initialSvg = loadCachedSvg() ?? SAMPLE_SVG
 
 export const useIconStore = create<IconState>((set, get) => ({
-  svg: SAMPLE_SVG,
+  svg: initialSvg,
   activePresetId: DEFAULT_BUILTIN_PRESET,
   userPresets: loadUserExportPresets(),
   outputs: cloneOutputs(initialBuiltinPreset.outputs),
@@ -195,7 +197,10 @@ export const useIconStore = create<IconState>((set, get) => ({
   normalise: DEFAULT_EFFECTS_OPTIONS.normalise,
   trimEnabled: DEFAULT_TRIM_OPTIONS.enabled,
   trimThreshold: DEFAULT_TRIM_OPTIONS.threshold,
-  setSvg: (svg) => set({ svg }),
+  setSvg: (svg) => {
+    persistCachedSvg(svg)
+    set({ svg })
+  },
   applyExportPreset: (presetId) => {
     if (presetId === 'custom') {
       set({ activePresetId: 'custom' })

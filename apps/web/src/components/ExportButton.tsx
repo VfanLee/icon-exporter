@@ -1,5 +1,4 @@
 import { DownloadOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
-import { DEFAULT_EXPORT_OPTIONS } from '@icon-forge/shared'
 import { Button, message } from 'antd'
 import { useState } from 'react'
 import { exportIcon, validateSvg } from '../services/api'
@@ -45,9 +44,11 @@ export function ExportZipButton({ block = false }: { block?: boolean }) {
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `${DEFAULT_EXPORT_OPTIONS.filename}-export.zip`
+      link.download = 'icons.zip'
+      document.body.appendChild(link)
       link.click()
-      URL.revokeObjectURL(url)
+      link.remove()
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
       message.success('ZIP 已下载')
     } catch (error) {
       message.error(error instanceof Error ? error.message : '导出失败')

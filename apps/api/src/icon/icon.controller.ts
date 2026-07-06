@@ -27,11 +27,14 @@ export class IconController {
   }
 
   @Post('export')
-  @Header('Content-Type', 'application/zip')
   @ApiBody({ type: ExportIconDto })
   async exportIcon(@Body() dto: ExportIconDto, @Res() res: Response) {
-    res.setHeader('Content-Disposition', `attachment; filename="${dto.filename}-export.zip"`)
+    const buffer = await this.iconService.exportIcon(dto)
 
-    await this.iconService.exportIcon(dto, res)
+    res.setHeader('Content-Type', 'application/zip')
+    res.setHeader('Content-Disposition', 'attachment; filename="icons.zip"')
+    res.setHeader('Content-Length', buffer.byteLength.toString())
+
+    res.send(buffer)
   }
 }

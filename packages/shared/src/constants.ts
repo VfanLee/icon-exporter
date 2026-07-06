@@ -61,11 +61,11 @@ export const DEFAULT_EXPORT_OPTIONS = {
   filename: 'icon',
   outputs: DEFAULT_CUSTOM_OUTPUTS,
   background: {
-    transparent: true,
+    transparent: false,
     color: '#ffffff',
   },
-  padding: 0,
-  borderRadius: 0,
+  padding: 0.12,
+  borderRadius: 0.22,
   fit: 'contain' as FitMode,
   quality: {
     webp: 90,

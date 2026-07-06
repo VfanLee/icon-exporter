@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
-import png2icons from 'png2icons'
+import * as png2icons from 'png2icons'
 import { type ExportSize } from '@icon-forge/shared'
 import type { ExportIconDto } from '../dto/export-icon.dto'
 import { ImageRendererService } from './image-renderer.service'

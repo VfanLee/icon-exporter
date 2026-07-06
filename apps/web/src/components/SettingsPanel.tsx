@@ -28,16 +28,14 @@ function PanelDescription({ children }: { children: ReactNode }) {
 
 function SettingsCollapse({
   items,
-  defaultActiveKey,
 }: {
   items: { key: string; label: string; children: ReactNode }[]
-  defaultActiveKey: string[]
 }) {
   return (
     <Collapse
       bordered={false}
       expandIconPlacement="end"
-      defaultActiveKey={defaultActiveKey}
+      activeKey={items.map((item) => item.key)}
       className="settings-collapse"
       items={items.map((item) => ({
         key: item.key,
@@ -54,7 +52,6 @@ function ContainerSettings() {
       <div className="settings-tab-scroll">
         <PanelDescription>设置图标容器的外观（背景、留白、圆角），左侧预览与导出结果保持一致。</PanelDescription>
         <SettingsCollapse
-          defaultActiveKey={['layout', 'background']}
           items={[
             { key: 'layout', label: '布局', children: <LayoutSettings /> },
             { key: 'background', label: '背景', children: <BackgroundSettings /> },
@@ -71,7 +68,6 @@ function GraphicSettings() {
       <div className="settings-tab-scroll">
         <PanelDescription>调整 SVG 图形的变换与效果（旋转、滤镜、裁切），左侧预览与导出结果保持一致。</PanelDescription>
         <SettingsCollapse
-          defaultActiveKey={['transform']}
           items={[
             { key: 'transform', label: '位置与方向', children: <TransformSettings /> },
             { key: 'effects', label: '色彩与效果', children: <EffectsSettings /> },
@@ -100,7 +96,7 @@ function ExportSettings() {
         </Flex>
         <ExportOutputsEditor />
         {qualityItems.length > 0 ? (
-          <SettingsCollapse defaultActiveKey={[]} items={qualityItems} />
+          <SettingsCollapse items={qualityItems} />
         ) : null}
       </div>
       <Flex vertical gap={8} style={{ flexShrink: 0, marginTop: 12 }}>
