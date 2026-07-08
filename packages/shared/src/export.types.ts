@@ -59,11 +59,13 @@ export interface ExportTrimOptions {
 export interface ExportOutputSpec {
   format: ExportFormat
   sizes: ExportSize[]
+  useOuterPadding: boolean
 }
 
 export interface ExportRenderRequest {
   svg: string
   background: ExportBackground
+  outerPadding: number
   padding: number
   borderRadius: number
   fit: FitMode

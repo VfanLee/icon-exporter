@@ -10,6 +10,7 @@ import {
   EXPORT_PRESETS,
   cloneOutputs,
   createOutputsFromFormats,
+  defaultUseOuterPadding,
   defaultOutputSpec,
   isBuiltinPresetId,
   type ExportFormat,
@@ -36,7 +37,7 @@ const SAMPLE_SVG = `<svg width="128" height="128" viewBox="0 0 128 128" xmlns="h
 </svg>`
 
 const PREVIEW_SIZE: ExportSize = { width: 512, height: 512 }
-const DEFAULT_BUILTIN_PRESET: ExportPresetId = 'preset1'
+const DEFAULT_BUILTIN_PRESET: Exclude<ExportPresetId, 'custom'> = 'preset1'
 
 function getBuiltinPreset(presetId: Exclude<ExportPresetId, 'custom'>) {
   return EXPORT_PRESETS[presetId]
@@ -49,6 +50,7 @@ interface IconState {
   outputs: ExportOutputSpec[]
   transparent: boolean
   backgroundColor: string
+  outerPadding: number
   padding: number
   borderRadius: number
   fit: FitMode
@@ -72,16 +74,19 @@ interface IconState {
   trimThreshold: number
   validation?: ValidateSvgResponse
   setSvg: (svg: string) => void
+  resetDefaults: () => void
   applyExportPreset: (presetId: string) => void
   saveCurrentAsPreset: (label: string) => void
   setFormats: (formats: ExportFormat[]) => void
   setOutputSizes: (format: ExportFormat, sizes: ExportSize[]) => void
+  setOutputUseOuterPadding: (format: ExportFormat, useOuterPadding: boolean) => void
   toggleOutputSize: (format: ExportFormat, size: number) => void
   addCustomOutputSize: (format: ExportFormat, size: number) => void
   addOutputFormat: (format: ExportFormat) => void
   removeOutputFormat: (format: ExportFormat) => void
   setTransparent: (transparent: boolean) => void
   setBackgroundColor: (color: string) => void
+  setOuterPadding: (outerPadding: number) => void
   setPadding: (padding: number) => void
   setBorderRadius: (borderRadius: number) => void
   setFit: (fit: FitMode) => void
@@ -112,7 +117,16 @@ function buildRenderOptions(
   state: IconState,
 ): Pick<
   ExportIconRequest,
-  'svg' | 'background' | 'padding' | 'borderRadius' | 'fit' | 'resize' | 'transform' | 'effects' | 'trim'
+  | 'svg'
+  | 'background'
+  | 'outerPadding'
+  | 'padding'
+  | 'borderRadius'
+  | 'fit'
+  | 'resize'
+  | 'transform'
+  | 'effects'
+  | 'trim'
 > {
   return {
     svg: state.svg,
@@ -120,6 +134,7 @@ function buildRenderOptions(
       transparent: state.transparent,
       color: state.backgroundColor,
     },
+    outerPadding: state.outerPadding,
     padding: state.padding,
     borderRadius: state.borderRadius,
     fit: state.fit,
@@ -159,6 +174,7 @@ function syncOutputsWithFormats(currentOutputs: ExportOutputSpec[], formats: Exp
       return {
         format: existing.format,
         sizes: existing.sizes.map((size) => ({ ...size })),
+        useOuterPadding: existing.useOuterPadding ?? defaultUseOuterPadding(existing.format),
       }
     }
 
@@ -169,6 +185,36 @@ function syncOutputsWithFormats(currentOutputs: ExportOutputSpec[], formats: Exp
 const initialBuiltinPreset = getBuiltinPreset(DEFAULT_BUILTIN_PRESET)
 const initialSvg = loadCachedSvg() ?? SAMPLE_SVG
 
+function buildDefaultAppearanceState(): Partial<IconState> {
+  return {
+    transparent: DEFAULT_EXPORT_OPTIONS.background.transparent,
+    backgroundColor: DEFAULT_EXPORT_OPTIONS.background.color,
+    outerPadding: DEFAULT_EXPORT_OPTIONS.outerPadding,
+    padding: DEFAULT_EXPORT_OPTIONS.padding,
+    borderRadius: DEFAULT_EXPORT_OPTIONS.borderRadius,
+    fit: DEFAULT_EXPORT_OPTIONS.fit,
+    webpQuality: DEFAULT_EXPORT_OPTIONS.quality.webp,
+    jpegQuality: DEFAULT_EXPORT_OPTIONS.quality.jpeg,
+    avifQuality: DEFAULT_EXPORT_OPTIONS.quality.avif,
+    resizePosition: DEFAULT_RESIZE_OPTIONS.position,
+    rotate: DEFAULT_TRANSFORM_OPTIONS.rotate,
+    sharpenEnabled: DEFAULT_EFFECTS_OPTIONS.sharpen.enabled,
+    sharpenSigma: DEFAULT_EFFECTS_OPTIONS.sharpen.sigma,
+    blur: DEFAULT_EFFECTS_OPTIONS.blur,
+    greyscale: DEFAULT_EFFECTS_OPTIONS.greyscale,
+    tint: DEFAULT_EFFECTS_OPTIONS.tint,
+    negate: DEFAULT_EFFECTS_OPTIONS.negate,
+    modulateBrightness: DEFAULT_EFFECTS_OPTIONS.modulate.brightness,
+    modulateSaturation: DEFAULT_EFFECTS_OPTIONS.modulate.saturation,
+    modulateHue: DEFAULT_EFFECTS_OPTIONS.modulate.hue,
+    gamma: DEFAULT_EFFECTS_OPTIONS.gamma,
+    normalise: DEFAULT_EFFECTS_OPTIONS.normalise,
+    trimEnabled: DEFAULT_TRIM_OPTIONS.enabled,
+    trimThreshold: DEFAULT_TRIM_OPTIONS.threshold,
+    validation: undefined,
+  }
+}
+
 export const useIconStore = create<IconState>((set, get) => ({
   svg: initialSvg,
   activePresetId: DEFAULT_BUILTIN_PRESET,
@@ -176,6 +222,7 @@ export const useIconStore = create<IconState>((set, get) => ({
   outputs: cloneOutputs(initialBuiltinPreset.outputs),
   transparent: DEFAULT_EXPORT_OPTIONS.background.transparent,
   backgroundColor: DEFAULT_EXPORT_OPTIONS.background.color,
+  outerPadding: DEFAULT_EXPORT_OPTIONS.outerPadding,
   padding: DEFAULT_EXPORT_OPTIONS.padding,
   borderRadius: DEFAULT_EXPORT_OPTIONS.borderRadius,
   fit: DEFAULT_EXPORT_OPTIONS.fit,
@@ -199,7 +246,10 @@ export const useIconStore = create<IconState>((set, get) => ({
   trimThreshold: DEFAULT_TRIM_OPTIONS.threshold,
   setSvg: (svg) => {
     persistCachedSvg(svg)
-    set({ svg })
+    set({ svg, validation: undefined })
+  },
+  resetDefaults: () => {
+    set(buildDefaultAppearanceState())
   },
   applyExportPreset: (presetId) => {
     if (presetId === 'custom') {
@@ -290,6 +340,13 @@ export const useIconStore = create<IconState>((set, get) => ({
         }
       }),
     })),
+  setOutputUseOuterPadding: (format, useOuterPadding) =>
+    set((state) => ({
+      activePresetId: 'custom',
+      outputs: state.outputs.map((output) =>
+        output.format === format ? { ...output, useOuterPadding } : output,
+      ),
+    })),
   addCustomOutputSize: (format, size) =>
     set((state) => ({
       activePresetId: 'custom',
@@ -333,6 +390,7 @@ export const useIconStore = create<IconState>((set, get) => ({
     }),
   setTransparent: (transparent) => set({ transparent }),
   setBackgroundColor: (backgroundColor) => set({ backgroundColor }),
+  setOuterPadding: (outerPadding) => set({ outerPadding }),
   setPadding: (padding) => set({ padding }),
   setBorderRadius: (borderRadius) => set({ borderRadius }),
   setFit: (fit) => set({ fit }),

@@ -42,6 +42,9 @@ export class ExportOutputSpecDto {
   @IsIn(EXPORT_FORMATS)
   format!: ExportFormat
 
+  @IsBoolean()
+  useOuterPadding!: boolean
+
   @IsArray()
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_SIZE_COUNT)
@@ -192,6 +195,11 @@ export class ExportRenderOptionsDto {
   @ValidateNested()
   @Type(() => ExportBackgroundDto)
   background!: ExportBackgroundDto
+
+  @IsNumber()
+  @Min(0)
+  @Max(0.5)
+  outerPadding!: number
 
   @IsNumber()
   @Min(0)

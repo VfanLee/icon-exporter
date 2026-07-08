@@ -26,6 +26,37 @@ export class ImageRendererService {
   }
 
   private async buildPipeline(svg: string, size: ExportSize, options: RenderOptions): Promise<Sharp> {
+    const outerPaddingX = Math.floor(size.width * options.outerPadding)
+    const outerPaddingY = Math.floor(size.height * options.outerPadding)
+    const containerSize: ExportSize = {
+      width: Math.max(1, size.width - outerPaddingX * 2),
+      height: Math.max(1, size.height - outerPaddingY * 2),
+    }
+    const container = await this.buildContainer(svg, containerSize, options)
+
+    if (outerPaddingX === 0 && outerPaddingY === 0) {
+      return container
+    }
+
+    const containerBuffer = await container.png().toBuffer()
+
+    return sharp({
+      create: {
+        width: size.width,
+        height: size.height,
+        channels: 4,
+        background: this.transparentBackground(),
+      },
+    }).composite([
+      {
+        input: containerBuffer,
+        left: outerPaddingX,
+        top: outerPaddingY,
+      },
+    ])
+  }
+
+  private async buildContainer(svg: string, size: ExportSize, options: RenderOptions): Promise<Sharp> {
     const resizeOpts = { ...DEFAULT_RESIZE_OPTIONS, ...options.resize }
     const transform = { ...DEFAULT_TRANSFORM_OPTIONS, ...options.transform }
     const effects = this.mergeEffects(options)

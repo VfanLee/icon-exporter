@@ -64,8 +64,9 @@ export const DEFAULT_EXPORT_OPTIONS = {
     transparent: false,
     color: '#ffffff',
   },
+  outerPadding: 0.09,
   padding: 0.12,
-  borderRadius: 0.22,
+  borderRadius: 0.26,
   fit: 'contain' as FitMode,
   quality: {
     webp: 90,
