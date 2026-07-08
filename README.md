@@ -1,4 +1,4 @@
-# IconForge
+# Icon Forge
 
 把 SVG 快速合成 App 风格图标，并批量导出多种尺寸与格式。
 
@@ -26,8 +26,8 @@ pnpm workspace monorepo：
 
 ## 环境要求
 
-- [Node.js](https://nodejs.org/) 22
-- [pnpm](https://pnpm.io/) 11
+- Node.js：22
+- pnpm：11
 
 ## 安装
 
@@ -54,33 +54,3 @@ pnpm --filter @icon-forge/web dev
 pnpm --filter @icon-forge/api dev
 pnpm --filter @icon-forge/shared dev
 ```
-
-## 构建
-
-```bash
-pnpm build
-```
-
-生产环境启动 API：
-
-```bash
-pnpm --filter @icon-forge/api build
-pnpm --filter @icon-forge/api start:prod
-```
-
-`web` 构建产物在 `apps/web/dist`，可部署到任意静态托管。
-
-## 其他命令
-
-```bash
-pnpm lint    # 各子包分别 lint
-pnpm format  # Prettier 格式化全仓库
-```
-
-根目录统一管理 `prettier`、`typescript`、`eslint` 等开发依赖；各子包保留自己的 `tsconfig` 与 `eslint.config`。
-
-## 基本使用流程
-
-1. **上传 SVG** — 点击「源码」里的「上传 SVG」，或在编辑器里粘贴代码
-2. **预览调整** — 在「预览」里查看效果；右侧调整容器、图形与导出设置
-3. **导出** — 在右侧「导出」Tab 底部点击「导出 ZIP」下载成品
