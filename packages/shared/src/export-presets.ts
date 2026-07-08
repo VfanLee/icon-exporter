@@ -19,8 +19,12 @@ function squareSizes(sizes: readonly number[]): ExportSize[] {
 
 export const DEFAULT_ICO_EMBED_SIZES = [16, 32, 48, 256] as const
 
+export function defaultUseOuterPadding(format: ExportFormat): boolean {
+  return format !== 'ico'
+}
+
 export const DEFAULT_CUSTOM_OUTPUTS: ExportOutputSpec[] = [
-  { format: 'png', sizes: [squareSize(512)] },
+  { format: 'png', sizes: [squareSize(512)], useOuterPadding: defaultUseOuterPadding('png') },
 ]
 
 export const EXPORT_PRESETS: Record<Exclude<ExportPresetId, 'custom'>, ExportPreset> = {
@@ -29,25 +33,25 @@ export const EXPORT_PRESETS: Record<Exclude<ExportPresetId, 'custom'>, ExportPre
     label: '预设1',
     description: 'ICO 16–256 · ICNS 16–1024 · PNG 512',
     outputs: [
-      { format: 'ico', sizes: squareSizes([16, 32, 48, 64, 128, 256]) },
-      { format: 'icns', sizes: squareSizes([16, 32, 64, 128, 256, 512, 1024]) },
-      { format: 'png', sizes: [squareSize(512)] },
+      { format: 'ico', sizes: squareSizes([16, 32, 48, 64, 128, 256]), useOuterPadding: false },
+      { format: 'icns', sizes: squareSizes([16, 32, 64, 128, 256, 512, 1024]), useOuterPadding: true },
+      { format: 'png', sizes: [squareSize(512)], useOuterPadding: true },
     ],
   },
   preset2: {
     id: 'preset2',
     label: '预设2',
     description: 'PNG · 1024 / 512',
-    outputs: [{ format: 'png', sizes: squareSizes([1024, 512]) }],
+    outputs: [{ format: 'png', sizes: squareSizes([1024, 512]), useOuterPadding: true }],
   },
   preset3: {
     id: 'preset3',
     label: '预设3',
     description: 'SVG 512 · ICO 16/32/48 · PNG 512/192/180',
     outputs: [
-      { format: 'svg', sizes: [squareSize(512)] },
-      { format: 'ico', sizes: squareSizes([16, 32, 48]) },
-      { format: 'png', sizes: squareSizes([512, 192, 180]) },
+      { format: 'svg', sizes: [squareSize(512)], useOuterPadding: true },
+      { format: 'ico', sizes: squareSizes([16, 32, 48]), useOuterPadding: false },
+      { format: 'png', sizes: squareSizes([512, 192, 180]), useOuterPadding: true },
     ],
   },
 }
@@ -68,6 +72,7 @@ export function resolveExportPreset(presetId: ExportPresetId): Pick<ExportPreset
     outputs: preset.outputs.map((output) => ({
       format: output.format,
       sizes: output.sizes.map((size) => ({ ...size })),
+      useOuterPadding: output.useOuterPadding,
     })),
   }
 }
@@ -75,13 +80,13 @@ export function resolveExportPreset(presetId: ExportPresetId): Pick<ExportPreset
 export function defaultOutputSpec(format: ExportFormat): ExportOutputSpec {
   switch (format) {
     case 'ico':
-      return { format, sizes: squareSizes(DEFAULT_ICO_EMBED_SIZES) }
+      return { format, sizes: squareSizes(DEFAULT_ICO_EMBED_SIZES), useOuterPadding: defaultUseOuterPadding(format) }
     case 'icns':
-      return { format, sizes: [squareSize(1024)] }
+      return { format, sizes: [squareSize(1024)], useOuterPadding: defaultUseOuterPadding(format) }
     case 'svg':
-      return { format, sizes: [squareSize(512)] }
+      return { format, sizes: [squareSize(512)], useOuterPadding: defaultUseOuterPadding(format) }
     default:
-      return { format, sizes: [squareSize(512)] }
+      return { format, sizes: [squareSize(512)], useOuterPadding: defaultUseOuterPadding(format) }
   }
 }
 
@@ -113,5 +118,6 @@ export function cloneOutputs(outputs: ExportOutputSpec[]): ExportOutputSpec[] {
   return outputs.map((output) => ({
     format: output.format,
     sizes: output.sizes.map((size) => ({ ...size })),
+    useOuterPadding: output.useOuterPadding ?? defaultUseOuterPadding(output.format),
   }))
 }

@@ -1,5 +1,5 @@
 import type { ExportFormat, ExportOutputSpec, ExportSize } from '@icon-forge/shared'
-import { cloneOutputs } from '@icon-forge/shared'
+import { cloneOutputs, defaultUseOuterPadding } from '@icon-forge/shared'
 
 export interface UserExportPreset {
   id: string
@@ -45,11 +45,12 @@ function migrateLegacyPreset(preset: LegacyUserExportPreset): UserExportPreset |
         return {
           format,
           sizes: preset.icoEmbedSizes.map((size) => ({ width: size, height: size })),
+          useOuterPadding: defaultUseOuterPadding(format),
         }
       }
 
       if (format === 'svg') {
-        return { format, sizes: [{ width: 512, height: 512 }] }
+        return { format, sizes: [{ width: 512, height: 512 }], useOuterPadding: defaultUseOuterPadding(format) }
       }
 
       if (format === 'icns') {
@@ -57,10 +58,11 @@ function migrateLegacyPreset(preset: LegacyUserExportPreset): UserExportPreset |
         return {
           format,
           sizes: preferred ? [preferred] : [sizes.reduce((max, size) => (size.width > max.width ? size : max), sizes[0])],
+          useOuterPadding: defaultUseOuterPadding(format),
         }
       }
 
-      return { format, sizes: sizes.map((size) => ({ ...size })) }
+      return { format, sizes: sizes.map((size) => ({ ...size })), useOuterPadding: defaultUseOuterPadding(format) }
     }),
   }
 }

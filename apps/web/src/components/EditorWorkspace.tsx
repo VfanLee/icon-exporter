@@ -14,6 +14,11 @@ const SvgUploader = lazy(() =>
     default: module.SvgUploader,
   })),
 )
+const ResetDefaultsButton = lazy(() =>
+  import('./SvgUploader').then((module) => ({
+    default: module.ResetDefaultsButton,
+  })),
+)
 
 function TabFallback() {
   return (
@@ -34,7 +39,10 @@ export function EditorWorkspace() {
         onChange={setActiveKey}
         destroyOnHidden={false}
         tabBarExtraContent={
-          <Space wrap>
+          <Space wrap size={12}>
+            <Suspense fallback={null}>
+              <ResetDefaultsButton />
+            </Suspense>
             {activeKey === 'source' ? <ValidateSvgButton /> : null}
             <Suspense fallback={null}>
               <SvgUploader />

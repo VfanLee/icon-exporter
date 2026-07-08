@@ -49,6 +49,8 @@ export class IconService {
 
     try {
       for (const output of dto.outputs) {
+        const renderOptions = output.useOuterPadding ? dto : { ...dto, outerPadding: 0 }
+
         switch (output.format) {
           case 'svg':
             this.zipBuilder.appendBuffer(
@@ -60,13 +62,13 @@ export class IconService {
 
           case 'ico': {
             const embedSizes = output.sizes.map((size) => size.width)
-            const icoBuffer = await this.icoBuilder.build(validation.sanitizedSvg, dto, embedSizes)
+            const icoBuffer = await this.icoBuilder.build(validation.sanitizedSvg, renderOptions, embedSizes)
             this.zipBuilder.appendBuffer(archive, icoBuffer, `${EXPORT_FOLDER_NAME}/${dto.filename}.ico`)
             break
           }
 
           case 'icns': {
-            const icnsBuffer = await this.icnsBuilder.build(validation.sanitizedSvg, dto, output.sizes)
+            const icnsBuffer = await this.icnsBuilder.build(validation.sanitizedSvg, renderOptions, output.sizes)
             this.zipBuilder.appendBuffer(archive, icnsBuffer, `${EXPORT_FOLDER_NAME}/${dto.filename}.icns`)
             break
           }
@@ -74,7 +76,7 @@ export class IconService {
           default: {
             const rasterFormat = output.format as RasterExportFormat
             for (const size of output.sizes) {
-              const buffer = await this.renderer.render(validation.sanitizedSvg, size, rasterFormat, dto)
+              const buffer = await this.renderer.render(validation.sanitizedSvg, size, rasterFormat, renderOptions)
               this.zipBuilder.appendBuffer(
                 archive,
                 buffer,

@@ -1,7 +1,22 @@
-import { UploadOutlined } from '@ant-design/icons'
+import { ReloadOutlined, UploadOutlined } from '@ant-design/icons'
 import { Button, message, Upload } from 'antd'
 import type { UploadProps } from 'antd'
 import { useIconStore } from '../stores/iconStore'
+
+export function ResetDefaultsButton() {
+  const resetDefaults = useIconStore((state) => state.resetDefaults)
+
+  const handleReset = () => {
+    resetDefaults()
+    message.success('已恢复默认')
+  }
+
+  return (
+    <Button danger icon={<ReloadOutlined />} onClick={handleReset}>
+      恢复默认
+    </Button>
+  )
+}
 
 export function SvgUploader() {
   const setSvg = useIconStore((state) => state.setSvg)

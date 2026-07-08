@@ -348,10 +348,23 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.export-preview-frame {
+  position: relative;
+  flex: 0 0 auto;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px dashed rgba(22, 119, 255, 0.75);
+    pointer-events: none;
+  }
 
   img {
-    max-width: min(100%, 512px);
-    max-height: min(100%, 512px);
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     display: block;
   }

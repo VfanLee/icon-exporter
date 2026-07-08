@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Card, Flex, InputNumber, Select, Space, Tag, Typography } from 'antd'
+import { Button, Card, Flex, InputNumber, Select, Space, Switch, Tag, Typography } from 'antd'
 import { useMemo, useState } from 'react'
 import {
   EXPORT_FORMATS,
@@ -33,11 +33,13 @@ function OutputFormatCard({
   onToggleSize,
   onAddCustomSize,
   onRemoveCustomSize,
+  onUseOuterPaddingChange,
 }: {
   output: ExportOutputSpec
   onToggleSize: (size: number) => void
   onAddCustomSize: (size: number) => void
   onRemoveCustomSize: (size: number) => void
+  onUseOuterPaddingChange: (useOuterPadding: boolean) => void
 }) {
   const [customSize, setCustomSize] = useState<number | null>(null)
   const meta = FORMAT_META[output.format]
@@ -72,6 +74,15 @@ function OutputFormatCard({
         </Typography.Text>
       ) : (
         <Flex vertical gap={8}>
+          <Flex align="center" justify="space-between" gap={8}>
+            <Typography.Text style={{ fontSize: 12 }}>使用应用外边距</Typography.Text>
+            <Switch
+              size="small"
+              checked={output.useOuterPadding}
+              onChange={onUseOuterPaddingChange}
+            />
+          </Flex>
+
           <Space size={4} wrap>
             {COMMON_SIZES.map((size) => (
               <CheckableTag
@@ -122,6 +133,7 @@ export function ExportOutputsEditor() {
   const activeFormats = useExportFormats()
   const setFormats = useIconStore((state) => state.setFormats)
   const toggleOutputSize = useIconStore((state) => state.toggleOutputSize)
+  const setOutputUseOuterPadding = useIconStore((state) => state.setOutputUseOuterPadding)
   const addCustomOutputSize = useIconStore((state) => state.addCustomOutputSize)
 
   const formatOptions = useMemo(
@@ -166,6 +178,9 @@ export function ExportOutputsEditor() {
               onToggleSize={(size) => toggleOutputSize(output.format, size)}
               onAddCustomSize={(size) => addCustomOutputSize(output.format, size)}
               onRemoveCustomSize={(size) => toggleOutputSize(output.format, size)}
+              onUseOuterPaddingChange={(useOuterPadding) =>
+                setOutputUseOuterPadding(output.format, useOuterPadding)
+              }
             />
           ))}
         </Flex>

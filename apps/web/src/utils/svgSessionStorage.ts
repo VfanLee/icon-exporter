@@ -16,3 +16,11 @@ export function persistCachedSvg(svg: string) {
     // Session storage can be unavailable in private browsing or restricted contexts.
   }
 }
+
+export function clearCachedSvg() {
+  try {
+    sessionStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // Session storage can be unavailable in private browsing or restricted contexts.
+  }
+}
