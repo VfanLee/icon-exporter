@@ -15,7 +15,12 @@ type RenderOptions = ExportRenderOptionsDto | PreviewIconDto
 
 @Injectable()
 export class ImageRendererService {
-  async render(svg: string, size: ExportSize, format: Exclude<ExportFormat, 'svg' | 'ico' | 'icns'>, options: RenderOptions) {
+  async render(
+    svg: string,
+    size: ExportSize,
+    format: Exclude<ExportFormat, 'svg' | 'ico' | 'icns'>,
+    options: RenderOptions,
+  ) {
     const image = await this.buildPipeline(svg, size, options)
     return this.encode(image, format, options)
   }

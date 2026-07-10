@@ -37,12 +37,7 @@ export function ExportPresetSettings() {
 
   return (
     <SettingField label="导出预设" hint="选择后会自动填入对应的格式与尺寸">
-      <Select
-        value={activePresetId}
-        options={options}
-        onChange={applyExportPreset}
-        style={{ width: '100%' }}
-      />
+      <Select value={activePresetId} options={options} onChange={applyExportPreset} style={{ width: '100%' }} />
     </SettingField>
   )
 }
@@ -93,11 +88,7 @@ export function SavePresetButton({ block = false }: { block?: boolean }) {
         destroyOnHidden
       >
         <Form form={form} layout="vertical" requiredMark={false}>
-          <Form.Item
-            name="name"
-            label="预设名称"
-            rules={[{ required: true, message: '请输入预设名称' }]}
-          >
+          <Form.Item name="name" label="预设名称" rules={[{ required: true, message: '请输入预设名称' }]}>
             <Input placeholder="例如：我的 App 图标" onPressEnter={handleSave} />
           </Form.Item>
         </Form>

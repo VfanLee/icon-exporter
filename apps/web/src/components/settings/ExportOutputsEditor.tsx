@@ -1,12 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Card, Flex, InputNumber, Select, Space, Switch, Tag, Typography } from 'antd'
 import { useMemo, useState } from 'react'
-import {
-  EXPORT_FORMATS,
-  countOutputFiles,
-  type ExportFormat,
-  type ExportOutputSpec,
-} from '@icon-forge/shared'
+import { EXPORT_FORMATS, countOutputFiles, type ExportFormat, type ExportOutputSpec } from '@icon-forge/shared'
 import { useExportFormats, useIconStore } from '../../stores/iconStore'
 import { SettingField } from './SettingField'
 
@@ -76,20 +71,12 @@ function OutputFormatCard({
         <Flex vertical gap={8}>
           <Flex align="center" justify="space-between" gap={8}>
             <Typography.Text style={{ fontSize: 12 }}>使用应用外边距</Typography.Text>
-            <Switch
-              size="small"
-              checked={output.useOuterPadding}
-              onChange={onUseOuterPaddingChange}
-            />
+            <Switch size="small" checked={output.useOuterPadding} onChange={onUseOuterPaddingChange} />
           </Flex>
 
           <Space size={4} wrap>
             {COMMON_SIZES.map((size) => (
-              <CheckableTag
-                key={size}
-                checked={selectedSizes.includes(size)}
-                onChange={() => onToggleSize(size)}
-              >
+              <CheckableTag key={size} checked={selectedSizes.includes(size)} onChange={() => onToggleSize(size)}>
                 {size}
               </CheckableTag>
             ))}
@@ -178,9 +165,7 @@ export function ExportOutputsEditor() {
               onToggleSize={(size) => toggleOutputSize(output.format, size)}
               onAddCustomSize={(size) => addCustomOutputSize(output.format, size)}
               onRemoveCustomSize={(size) => toggleOutputSize(output.format, size)}
-              onUseOuterPaddingChange={(useOuterPadding) =>
-                setOutputUseOuterPadding(output.format, useOuterPadding)
-              }
+              onUseOuterPaddingChange={(useOuterPadding) => setOutputUseOuterPadding(output.format, useOuterPadding)}
             />
           ))}
         </Flex>

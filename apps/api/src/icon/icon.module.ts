@@ -9,6 +9,13 @@ import { ZipBuilderService } from './services/zip-builder.service'
 
 @Module({
   controllers: [IconController],
-  providers: [IconService, SvgSanitizerService, ImageRendererService, IcoBuilderService, IcnsBuilderService, ZipBuilderService],
+  providers: [
+    IconService,
+    SvgSanitizerService,
+    ImageRendererService,
+    IcoBuilderService,
+    IcnsBuilderService,
+    ZipBuilderService,
+  ],
 })
 export class IconModule {}

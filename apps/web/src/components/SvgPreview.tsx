@@ -149,9 +149,7 @@ export function SvgPreview() {
           options={BACKGROUND_OPTIONS}
           onChange={(value) => setBackground(value as PreviewBackground)}
         />
-        <Typography.Text type="secondary">
-          预览为导出效果模拟，背景仅用于检视透明区域
-        </Typography.Text>
+        <Typography.Text type="secondary">预览为导出效果模拟，背景仅用于检视透明区域</Typography.Text>
       </Flex>
 
       <div className={stageClass}>

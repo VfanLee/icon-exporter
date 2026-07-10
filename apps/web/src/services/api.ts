@@ -1,9 +1,4 @@
-import type {
-  ExportIconRequest,
-  PreviewIconRequest,
-  ValidateSvgRequest,
-  ValidateSvgResponse,
-} from '@icon-forge/shared'
+import type { ExportIconRequest, PreviewIconRequest, ValidateSvgRequest, ValidateSvgResponse } from '@icon-forge/shared'
 
 async function parseError(response: Response) {
   try {
@@ -19,13 +14,7 @@ async function parseError(response: Response) {
 
 function isCompleteZipArchive(buffer: ArrayBuffer) {
   const bytes = new Uint8Array(buffer)
-  if (
-    bytes.length < 22 ||
-    bytes[0] !== 0x50 ||
-    bytes[1] !== 0x4b ||
-    bytes[2] !== 0x03 ||
-    bytes[3] !== 0x04
-  ) {
+  if (bytes.length < 22 || bytes[0] !== 0x50 || bytes[1] !== 0x4b || bytes[2] !== 0x03 || bytes[3] !== 0x04) {
     return false
   }
 
@@ -33,12 +22,7 @@ function isCompleteZipArchive(buffer: ArrayBuffer) {
   const minEndOffset = Math.max(0, bytes.length - maxCommentLength - 22)
 
   for (let index = bytes.length - 22; index >= minEndOffset; index -= 1) {
-    if (
-      bytes[index] === 0x50 &&
-      bytes[index + 1] === 0x4b &&
-      bytes[index + 2] === 0x05 &&
-      bytes[index + 3] === 0x06
-    ) {
+    if (bytes[index] === 0x50 && bytes[index + 1] === 0x4b && bytes[index + 2] === 0x05 && bytes[index + 3] === 0x06) {
       return true
     }
   }

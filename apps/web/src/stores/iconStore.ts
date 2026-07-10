@@ -22,11 +22,7 @@ import {
   type ExportSize,
   type ValidateSvgResponse,
 } from '@icon-forge/shared'
-import {
-  loadUserExportPresets,
-  persistUserExportPresets,
-  type UserExportPreset,
-} from '../utils/exportPresetStorage'
+import { loadUserExportPresets, persistUserExportPresets, type UserExportPreset } from '../utils/exportPresetStorage'
 import { loadCachedSvg, persistCachedSvg } from '../utils/svgSessionStorage'
 
 const SAMPLE_SVG = `<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
@@ -343,9 +339,7 @@ export const useIconStore = create<IconState>((set, get) => ({
   setOutputUseOuterPadding: (format, useOuterPadding) =>
     set((state) => ({
       activePresetId: 'custom',
-      outputs: state.outputs.map((output) =>
-        output.format === format ? { ...output, useOuterPadding } : output,
-      ),
+      outputs: state.outputs.map((output) => (output.format === format ? { ...output, useOuterPadding } : output)),
     })),
   addCustomOutputSize: (format, size) =>
     set((state) => ({

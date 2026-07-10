@@ -2,11 +2,7 @@ import { ExportOutlined, LayoutOutlined, PictureOutlined } from '@ant-design/ico
 import type { ReactNode } from 'react'
 import { Collapse, Divider, Flex, Form, Space, Tabs, Typography } from 'antd'
 import { ExportPresetSettings, SavePresetButton } from './settings/ExportPresetSettings'
-import {
-  ExportOutputsEditor,
-  ExportQualitySettings,
-  ExportScopeAlert,
-} from './settings/ExportOutputSettings'
+import { ExportOutputsEditor, ExportQualitySettings, ExportScopeAlert } from './settings/ExportOutputSettings'
 import { LayoutSettings } from './settings/LayoutSettings'
 import { BackgroundSettings } from './settings/BackgroundSettings'
 import { TransformSettings } from './settings/TransformSettings'
@@ -17,20 +13,13 @@ import { ExportZipButton } from './ExportButton'
 
 function PanelDescription({ children }: { children: ReactNode }) {
   return (
-    <Typography.Text
-      type="secondary"
-      style={{ display: 'block', marginBottom: 12, fontSize: 12, lineHeight: 1.5 }}
-    >
+    <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 12, fontSize: 12, lineHeight: 1.5 }}>
       {children}
     </Typography.Text>
   )
 }
 
-function SettingsCollapse({
-  items,
-}: {
-  items: { key: string; label: string; children: ReactNode }[]
-}) {
+function SettingsCollapse({ items }: { items: { key: string; label: string; children: ReactNode }[] }) {
   return (
     <Collapse
       bordered={false}
@@ -95,9 +84,7 @@ function ExportSettings() {
           <ExportPresetSettings />
         </Flex>
         <ExportOutputsEditor />
-        {qualityItems.length > 0 ? (
-          <SettingsCollapse items={qualityItems} />
-        ) : null}
+        {qualityItems.length > 0 ? <SettingsCollapse items={qualityItems} /> : null}
       </div>
       <Flex vertical gap={8} style={{ flexShrink: 0, marginTop: 12 }}>
         <Divider style={{ margin: 0 }} />

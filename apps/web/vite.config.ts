@@ -40,11 +40,6 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: [
-      '@uiw/react-codemirror',
-      '@codemirror/lang-xml',
-      '@codemirror/theme-one-dark',
-      '@codemirror/view',
-    ],
+    include: ['@uiw/react-codemirror', '@codemirror/lang-xml', '@codemirror/theme-one-dark', '@codemirror/view'],
   },
 })

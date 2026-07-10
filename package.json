@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "turbo run dev",
     "build": "turbo run build",
-    "postinstall": "pnpm --filter @icon-forge/shared build",
+    "dev": "turbo run dev",
     "format": "prettier --write .",
+    "postinstall": "pnpm --filter @icon-forge/shared build",
     "lint": "turbo run lint"
   },
   "devDependencies": {
@@ -24,5 +24,9 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.62.0"
   },
-  "packageManager": "pnpm@11.9.0"
+  "packageManager": "pnpm@11.11.0",
+  "engines": {
+    "node": ">=24 <25",
+    "pnpm": "11.11.0"
+  }
 }

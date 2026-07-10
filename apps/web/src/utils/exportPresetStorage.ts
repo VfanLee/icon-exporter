@@ -57,7 +57,9 @@ function migrateLegacyPreset(preset: LegacyUserExportPreset): UserExportPreset |
         const preferred = sizes.find((size) => size.width === 1024 && size.height === 1024)
         return {
           format,
-          sizes: preferred ? [preferred] : [sizes.reduce((max, size) => (size.width > max.width ? size : max), sizes[0])],
+          sizes: preferred
+            ? [preferred]
+            : [sizes.reduce((max, size) => (size.width > max.width ? size : max), sizes[0])],
           useOuterPadding: defaultUseOuterPadding(format),
         }
       }

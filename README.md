@@ -26,7 +26,7 @@ pnpm workspace monorepo：
 
 ## 环境要求
 
-- Node.js：22
+- Node.js：24
 - pnpm：11
 
 ## 安装
@@ -41,11 +41,10 @@ pnpm install
 pnpm dev
 ```
 
-| 服务    | 地址                           |
-| ------- | ------------------------------ |
-| Web     | http://localhost:5173          |
-| API     | http://localhost:3000          |
-| Swagger | http://localhost:3000/api-docs |
+| 服务 | 地址                  |
+| ---- | --------------------- |
+| Web  | http://localhost:5173 |
+| API  | http://localhost:3000 |
 
 单独启动某个包：
 
